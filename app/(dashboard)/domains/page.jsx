@@ -1,53 +1,14 @@
 "use client";
 import React from "react";
-//Bootstrap and jQuery libraries
-// import "bootstrap/dist/css/bootstrap.min.css";
-import "jquery/dist/jquery.min.js";
+import dynamic from "next/dynamic";
+const Index = dynamic(
+  () => {
+    return import("./Index");
+  },
+  { ssr: false }
+);
 
-//Datatable Modules
-import "datatables.net-dt/js/dataTables.dataTables";
-import "datatables.net-dt/css/jquery.dataTables.min.css";
-import $ from "jquery";
-import Cookies from "js-cookie";
-import useUpdateEffect from "../../../hooks/useUpdateEffect";
-
-const Index = () => {
-  const token = Cookies.get("AT");
-  useUpdateEffect(() => {
-    $("#domain_index").DataTable({
-      ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/domains",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      search: { smart: true },
-      processing: true,
-      serverSide: true,
-      columns: [
-        // colum names..
-        { data: "name", searchable: true, orderable: true },
-        { data: "code", searchable: true, orderable: true },
-        { data: "created_at", searchable: true, orderable: true },
-        // { data: "actions", searchable: false, orderable: false },
-      ],
-      columnDefs: [
-        // difinition and styling
-        { targets: [0, 2] },
-        // { className: "text-center", targets: [0, 2] },
-      ],
-    });
-  }, []);
-
-  // $(function () {
-  // Client-side-only code
-  if (typeof window === "undefined") {
-    return <p>loading...</p>;
-  }
-
-  // });
-  //initialize datatable
-
+const page = () => {
   return (
     <>
       {/* <!-- Content header --> */}
@@ -70,15 +31,7 @@ const Index = () => {
           </div>
           <div className="block w-full relative overflow-x-auto">
             <div className="relative">
-              <table id="domain_index">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Code</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-              </table>
+              <Index />
             </div>
           </div>
         </div>
@@ -87,4 +40,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default page;

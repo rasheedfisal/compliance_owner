@@ -185,7 +185,7 @@ function NotificationPanel({
                   </div>
                   <div className="flex-1 overflow-hidden">
                     <h5 className="text-sm font-semibold text-gray-600 dark:text-light">
-                      New project "KWD Dashboard" created
+                      New project &quot;KWD Dashboard&ldquo; created
                     </h5>
                     <p className="text-sm font-normal text-gray-400 truncate dark:text-primary-lighter">
                       Looks like there might be a new theme soon
@@ -256,7 +256,7 @@ function NotificationPanel({
                     </div>
                     <div className="flex-1 overflow-hidden">
                       <h5 className="text-sm font-semibold text-gray-600 dark:text-light">
-                        New project "KWD Dashboard" created
+                        New project &quot;KWD Dashboard&ldquo; created
                       </h5>
                       <p className="text-sm font-normal text-gray-400 truncate dark:text-primary-lighter">
                         Looks like there might be a new theme soon
