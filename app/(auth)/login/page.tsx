@@ -27,7 +27,7 @@ const loginSchema = object({
 
 export type LoginInput = TypeOf<typeof loginSchema>;
 
-const login = () => {
+const Login = () => {
   const router = useRouter();
   const [enableQuery, setEnableQuery] = useState(false);
 
@@ -206,4 +206,4 @@ const login = () => {
   );
 };
 
-export default login;
+export default Login;

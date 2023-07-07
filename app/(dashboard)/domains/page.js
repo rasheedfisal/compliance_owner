@@ -11,7 +11,7 @@ import $ from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "../../../hooks/useUpdateEffect";
 
-const index = () => {
+const Index = () => {
   const token = Cookies.get("AT");
   useUpdateEffect(() => {
     $("#domain_index").DataTable({
@@ -87,4 +87,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default Index;

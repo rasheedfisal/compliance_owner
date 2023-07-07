@@ -38,7 +38,7 @@ const updateUserSchema = object({
 }).partial();
 
 type IUpdateUser = TypeOf<typeof updateUserSchema>;
-const profile = () => {
+const Profile = () => {
   const [img, setImg] = useState("");
   const stateContext = useStateContext();
 
@@ -136,4 +136,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default Profile;

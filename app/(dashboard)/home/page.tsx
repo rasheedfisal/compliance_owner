@@ -29,7 +29,7 @@ ChartJS.register(
   LineElement
 );
 
-const home = () => {
+const Home = () => {
   const stateContext = useStateContext();
 
   const options = {
@@ -576,4 +576,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;
