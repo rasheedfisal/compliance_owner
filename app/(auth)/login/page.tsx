@@ -53,7 +53,6 @@ const Login = () => {
         setTimeout(() => router.push("/home"), 1000);
       },
       onError(err) {
-        console.log(err);
         setEnableQuery(false);
       },
     }

@@ -1,10 +1,9 @@
 "use client";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import React, { MouseEventHandler } from "react";
-import NavLink from "@/components/NavLink";
 
 import { links } from "@/data/siteInfo";
+import NavLinkII from "@/components/NavLinkII";
 
 type SidebarProps = {
   openSettingsPanel: MouseEventHandler;
@@ -39,24 +38,12 @@ const SideBar = ({ openSettingsPanel }: SidebarProps) => {
           {/*  <!-- Dashboards links --> */}
 
           {links.map((item) => (
-            <NavLink
+            <NavLinkII
               key={item.title}
               title={item.title}
               icon={item.icon}
-              open={item.open}
-              active={item.active}
-            >
-              {item.links.map((itemLink) => (
-                <Link
-                  key={itemLink.name}
-                  href={itemLink.path}
-                  role="menuitem"
-                  className="block p-2 text-sm text-gray-700 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700"
-                >
-                  {itemLink.name}
-                </Link>
-              ))}
-            </NavLink>
+              path={item.path}
+            />
           ))}
         </nav>
 

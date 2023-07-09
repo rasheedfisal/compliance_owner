@@ -60,3 +60,16 @@ export interface IUser {
   role: string;
   permissions: string[];
 }
+
+export interface ICreateUpdateDomain {
+  name: string;
+  code: number;
+}
+
+export interface IDomain {
+  id: number;
+  name: string;
+  updated_at: Date;
+  created_at: Date;
+  code: number;
+}

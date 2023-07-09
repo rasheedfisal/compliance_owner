@@ -84,6 +84,15 @@
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
+/* datatable */
+.dataTables_wrapper .dataTables_length select {
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  background-color: transparent;
+  color: inherit;
+  padding: 5px;
+  width: 70px;
+}
 
 @tailwind base;
 @tailwind components;

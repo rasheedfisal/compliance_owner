@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { useLoaded } from "@/hooks/useLoaded";
 import { useRouter } from "next/navigation";
-import { useStateContext } from "@/context/AppConext";
 import { useMutation } from "@tanstack/react-query";
 import { logoutUserFn } from "@/api/authApi";
 import { toast } from "react-toastify";
@@ -41,7 +40,6 @@ const DesktopMenu = ({
 }: DesktopProps) => {
   const loaded = useLoaded();
   const router = useRouter();
-  const stateContext = useStateContext();
 
   const { mutate: logoutUser, isLoading } = useMutation(() => logoutUserFn(), {
     onSuccess: () => {
