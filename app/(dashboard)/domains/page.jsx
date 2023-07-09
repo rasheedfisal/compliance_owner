@@ -13,9 +13,9 @@ const page = () => {
   return (
     <>
       {/* <!-- Content header --> */}
-      <div className="flex items-center justify-between px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
+      {/* <div className="flex items-center justify-between px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <h1 className="text-xl font-semibold">Manage Domains</h1>
-      </div>
+      </div> */}
       <div className="grid grid-cols-1 p-4">
         <div className="w-full px-4 py-6 space-y-6 bg-white rounded-md dark:bg-darker">
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -33,7 +33,7 @@ const page = () => {
               </div>
             </div>
           </div>
-          <div className="p-4 border block w-full relative overflow-x-auto">
+          <div className="p-4 block w-full relative overflow-x-auto">
             <div className="relative">
               <Index />
             </div>
