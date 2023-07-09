@@ -3,9 +3,9 @@
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
-import { object, string, TypeOf, z } from "zod";
+import { object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import FormInput from "@/components/FormInput";
 import SubmitButton from "@/components/SubmitButton";
@@ -26,7 +26,7 @@ const createUpdateDomainSchema = object({
     }),
 });
 
-const page = () => {
+const Add = () => {
   const queryClient = useQueryClient();
   const { isLoading, mutate: createDomain } = useMutation(
     (domain: ICreateUpdateDomain) => createDomainFn(domain),
@@ -107,4 +107,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Add;
