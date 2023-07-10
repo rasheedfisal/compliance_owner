@@ -63,7 +63,7 @@ export interface IUser {
 
 export interface ICreateUpdateDomain {
   name: string;
-  code: number;
+  code: number | string;
 }
 
 export interface IDomain {
@@ -73,3 +73,5 @@ export interface IDomain {
   created_at: Date;
   code: number;
 }
+
+type IDomainFull = IDomain & { deleted_at: Date };
