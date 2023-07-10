@@ -11,7 +11,7 @@ const Index = dynamic(
   { ssr: false }
 );
 
-const page = () => {
+const Manage = () => {
   const [trashed, setTrashed] = useState(0);
   const { isLoading: isDomainLoading } = useQuery(
     ["trashed-domains"],
@@ -71,4 +71,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Manage;
