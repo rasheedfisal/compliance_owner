@@ -3,11 +3,11 @@ import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { getTrashedDominCountFn } from "@/api/domainApi";
+import { getTrashedControlsCountFn } from "@/api/controlsApi";
+import { toast } from "react-toastify";
 import DeleteIcon from "@/icons/DeleteIcon";
 import CreateIcon from "@/icons/CreateIcon";
 import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
 const Index = dynamic(
   () => {
     return import("./Index");
@@ -18,9 +18,9 @@ const Index = dynamic(
 const Manage = () => {
   const router = useRouter();
   const [trashed, setTrashed] = useState(0);
-  const { isLoading: isTrashedLoading } = useQuery(
-    ["trashed-domains-count"],
-    () => getTrashedDominCountFn(),
+  const { isLoading: isControlsLoading } = useQuery(
+    ["trashed-controls-count"],
+    () => getTrashedControlsCountFn(),
     {
       select: (data) => data,
       retry: 1,
@@ -48,7 +48,7 @@ const Manage = () => {
           <div className="rounded-t mb-0 px-4 py-3 border-0">
             <div className="flex flex-col gap-3 md:flex-row items-center">
               <div className="relative w-full px-4 max-w-full text-center md:text-left flex-grow flex-1">
-                <h3 className="font-semibold text-base">Domain List</h3>
+                <h3 className="font-semibold text-base">Controls List</h3>
               </div>
               <div className="relative w-full px-4 max-w-full items-center flex-grow flex-1 text-center md:text-right">
                 <span className="bg-red-700 space-x-1 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-700 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark text-xs font-bold uppercase px-3 py-1 rounded outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer">
@@ -57,14 +57,14 @@ const Manage = () => {
                   </span>
                   <button
                     className="inline-flex align-middle"
-                    onClick={() => router.push("/domains/trash")}
+                    onClick={() => router.push("/controls/trash")}
                   >
-                    Trashed {"("} {isTrashedLoading ? "..." : trashed} {")"}
+                    Trashed {"("} {isControlsLoading ? "..." : trashed} {")"}
                   </button>
                 </span>
 
                 <Link
-                  href="/domains/add"
+                  href="/controls/add"
                   className="bg-primary space-x-1 hover:bg-primary-dark text-white focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark text-xs font-bold uppercase px-3 py-1 rounded outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 >
                   <span className="w-4 inline-flex align-middle">

@@ -3,9 +3,9 @@
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
-import { object, string, z } from "zod";
+import { TypeOf, object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import FormInput from "@/components/FormInput";
 import SubmitButton from "@/components/SubmitButton";
@@ -13,11 +13,13 @@ import { DocumentPlusIcon } from "@heroicons/react/24/solid";
 
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
-import { createDomainFn } from "@/api/domainApi";
-import { ICreateUpdateDomain } from "@/typings";
+import { createControlsFn } from "@/api/controlsApi";
+import { getAllSubDominFn } from "@/api/subDomainApi";
+import { ICreateUpdateControls } from "@/typings";
 import { useRouter } from "next/navigation";
+import FormSelect from "@/components/FormSelect";
 
-const createUpdateDomainSchema = object({
+const createUpdateContrlsSchema = object({
   name: string().min(1, "Name is required"),
   code: z
     .string()
@@ -25,18 +27,44 @@ const createUpdateDomainSchema = object({
     .refine((val) => !Number.isNaN(parseInt(val, 10)), {
       message: "Expected number, received a string",
     }),
+  subdomain: z.object({
+    label: z.string(),
+    value: z.string(),
+  }),
 });
+
+export type IUpsertControls = TypeOf<typeof createUpdateContrlsSchema>;
 
 const Add = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { isLoading, mutate: createDomain } = useMutation(
-    (domain: ICreateUpdateDomain) => createDomainFn(domain),
+
+  const {
+    isLoading: isDomainLoading,
+    isSuccess,
+    data: subdomains,
+  } = useQuery(["sub-domains"], () => getAllSubDominFn(), {
+    select: (data) => data,
+    retry: 1,
+    onSuccess(data) {
+      console.log(data.data);
+    },
+    onError: (error) => {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+
+  const { isLoading, mutate: createControls } = useMutation(
+    (subdomain: ICreateUpdateControls) => createControlsFn(subdomain),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["controls"]);
         toast.success(message);
-        router.push("/domains");
+        router.push("/controls");
       },
       onError: (error: any) => {
         if ((error as any).response?.data.message) {
@@ -53,8 +81,8 @@ const Add = () => {
     }
   );
 
-  const methods = useForm<ICreateUpdateDomain>({
-    resolver: zodResolver(createUpdateDomainSchema),
+  const methods = useForm<IUpsertControls>({
+    resolver: zodResolver(createUpdateContrlsSchema),
   });
   const {
     formState: { isSubmitSuccessful },
@@ -67,8 +95,13 @@ const Add = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
-  const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    createDomain(values);
+  const onSubmitHandler: SubmitHandler<IUpsertControls> = (values) => {
+    const subDomain: ICreateUpdateControls = {
+      name: values.name,
+      code: values.code,
+      sub_domain_id: values.subdomain.value,
+    };
+    createControls(subDomain);
   };
 
   return (
@@ -76,7 +109,7 @@ const Add = () => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/domains"
+          href="/controls"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -97,6 +130,23 @@ const Add = () => {
               </div>
               <div className="grid grid-cols-1">
                 <FormInput label="Code" type="text" name="code" />
+              </div>
+              <div className="grid grid-cols-1">
+                <FormSelect
+                  label="Sub Domains"
+                  name="subdomain"
+                  isLoading={isDomainLoading}
+                  data={
+                    isSuccess
+                      ? subdomains.data.map(({ id, name }) => ({
+                          value: id.toString(),
+                          label: name,
+                        }))
+                      : []
+                  }
+                  isMulti={false}
+                  isRtl={false}
+                />
               </div>
               <div className="flex">
                 <SubmitButton

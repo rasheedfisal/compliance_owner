@@ -1,20 +1,18 @@
 "use client";
 import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { object, string, TypeOf, z } from "zod";
+import { TypeOf, object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import SubmitButton from "@/components/SubmitButton";
-import {
-  ChevronDoubleLeftIcon,
-  DocumentPlusIcon,
-} from "@heroicons/react/24/solid";
-import FormInput from "@/components/FormInput";
+import { ChevronDoubleLeftIcon, TrashIcon } from "@heroicons/react/24/solid";
+import FormInputShow from "@/components/FormInputShow";
 import { useRouter } from "next/navigation";
-import { getDominFn, updateDomainFn } from "@/api/domainApi";
-import { ICreateUpdateDomain } from "@/typings";
+import { getRequlatorFn, moveRegulatorToTrashFn } from "@/api/regulatorApi";
+import TrashedButton from "@/components/TrashedButton";
 import Link from "next/link";
+import FileUpLoader from "@/components/FileUploader";
+import FormShowFile from "@/components/FormShowFile";
 
 type PageProps = {
   params: {
@@ -22,22 +20,20 @@ type PageProps = {
   };
 };
 
-const updateDomainSchema = object({
-  name: string().min(1, "Name is required"),
-  code: z
-    .string()
-    .min(1, "Code is Required")
-    .refine((val) => !Number.isNaN(parseInt(val, 10)), {
-      message: "Expected number, received a string",
-    }),
-});
+const showRegulatorSchema = object({
+  name: string().optional(),
+  email_domain: string().optional(),
+  logo: string().optional(),
+}).partial();
 
-const Edit = ({ params: { DId } }: PageProps) => {
+type IShowRegulator = TypeOf<typeof showRegulatorSchema>;
+
+const Show = ({ params: { DId } }: PageProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { isLoading: isDomainLoading } = useQuery(
-    ["domains", DId],
-    () => getDominFn(DId),
+  const { isLoading: isRegulatorLoading, data: getRegulator } = useQuery(
+    ["regulators", DId],
+    () => getRequlatorFn(DId),
     {
       select: (data) => data,
       retry: 1,
@@ -45,7 +41,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
         if (!error) {
           methods.reset({
             name: data.name,
-            code: data.code.toString(),
+            email_domain: data.email_domain,
           });
         }
       },
@@ -59,14 +55,13 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const { isLoading, mutate: updateDomin } = useMutation(
-    ({ id, domain }: { id: string; domain: ICreateUpdateDomain }) =>
-      updateDomainFn({ id, domain }),
+  const { isLoading, mutate: moveRegulatorToTrash } = useMutation(
+    ({ id }: { id: string }) => moveRegulatorToTrashFn({ id }),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["trashed-regulators-count"]);
         toast.success(message);
-        router.push("/domains");
+        router.push("/regulators");
       },
       onError: (error: any) => {
         if ((error as any).response?.data?.message) {
@@ -84,16 +79,16 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const methods = useForm<ICreateUpdateDomain>({
-    resolver: zodResolver(updateDomainSchema),
+  const methods = useForm<IShowRegulator>({
+    resolver: zodResolver(showRegulatorSchema),
   });
 
-  if (isDomainLoading) {
+  if (isRegulatorLoading) {
     return <p>Loading...</p>;
   }
 
-  const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    updateDomin({ id: DId, domain: values });
+  const onSubmitHandler: SubmitHandler<IShowRegulator> = (values) => {
+    moveRegulatorToTrash({ id: DId });
   };
 
   return (
@@ -101,7 +96,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/domains"
+          href="/regulators"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -118,17 +113,25 @@ const Edit = ({ params: { DId } }: PageProps) => {
               onSubmit={methods.handleSubmit(onSubmitHandler)}
             >
               <div className="grid grid-cols-1">
-                <FormInput label="Name" type="text" name="name" />
+                <FormInputShow label="Name" type="text" name="name" />
               </div>
               <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
+                <FormInputShow label="Email" type="email" name="email_domain" />
               </div>
-              <div className="flex">
-                <SubmitButton
-                  title="Submit"
+              <div className="grid grid-cols-1">
+                <FormShowFile
+                  name="logo"
+                  multiple={false}
+                  label=""
+                  defaultUrl={getRegulator?.data.logo}
+                />
+              </div>
+              <div>
+                <TrashedButton
+                  title="Move To Trash"
                   clicked={isLoading}
                   loadingTitle="loading..."
-                  icon={<DocumentPlusIcon className="h-5 w-5" />}
+                  icon={<TrashIcon className="h-5 w-5" />}
                 />
               </div>
             </form>
@@ -139,4 +142,4 @@ const Edit = ({ params: { DId } }: PageProps) => {
   );
 };
 
-export default Edit;
+export default Show;

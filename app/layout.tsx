@@ -1,6 +1,9 @@
 import { StateContextProvider } from "@/context/AppConext";
 import ReactQueryWrapper from "./ReactQueryWrapper";
+
+import "datatables.net-dt/css/jquery.dataTables.min.css";
 import "react-toastify/dist/ReactToastify.css";
+
 import "./globals.css";
 import type { Metadata } from "next";
 

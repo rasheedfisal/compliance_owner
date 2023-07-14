@@ -12,9 +12,10 @@ import {
 } from "@heroicons/react/24/solid";
 import FormInput from "@/components/FormInput";
 import { useRouter } from "next/navigation";
-import { getDominFn, updateDomainFn } from "@/api/domainApi";
-import { ICreateUpdateDomain } from "@/typings";
+import { getRequlatorFn, updateRegulatorFn } from "@/api/regulatorApi";
 import Link from "next/link";
+import FileUpLoader from "@/components/FileUploader";
+import { updateRegulatorSchema } from "@/schema/orgSchema";
 
 type PageProps = {
   params: {
@@ -22,22 +23,14 @@ type PageProps = {
   };
 };
 
-const updateDomainSchema = object({
-  name: string().min(1, "Name is required"),
-  code: z
-    .string()
-    .min(1, "Code is Required")
-    .refine((val) => !Number.isNaN(parseInt(val, 10)), {
-      message: "Expected number, received a string",
-    }),
-});
+type IUpdateRegulator = TypeOf<typeof updateRegulatorSchema>;
 
 const Edit = ({ params: { DId } }: PageProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { isLoading: isDomainLoading } = useQuery(
-    ["domains", DId],
-    () => getDominFn(DId),
+  const { isLoading: isRegulatorLoading, data: getRegulator } = useQuery(
+    ["regulator", DId],
+    () => getRequlatorFn(DId),
     {
       select: (data) => data,
       retry: 1,
@@ -45,7 +38,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
         if (!error) {
           methods.reset({
             name: data.name,
-            code: data.code.toString(),
+            email_domain: data.email_domain,
           });
         }
       },
@@ -59,14 +52,14 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const { isLoading, mutate: updateDomin } = useMutation(
-    ({ id, domain }: { id: string; domain: ICreateUpdateDomain }) =>
-      updateDomainFn({ id, domain }),
+  const { isLoading, mutate: updateRegulator } = useMutation(
+    ({ id, formData }: { id: string; formData: FormData }) =>
+      updateRegulatorFn({ id, formData }),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["regulators"]);
         toast.success(message);
-        router.push("/domains");
+        router.push("/regulators");
       },
       onError: (error: any) => {
         if ((error as any).response?.data?.message) {
@@ -84,16 +77,31 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const methods = useForm<ICreateUpdateDomain>({
-    resolver: zodResolver(updateDomainSchema),
+  const methods = useForm<IUpdateRegulator>({
+    resolver: zodResolver(updateRegulatorSchema),
   });
 
-  if (isDomainLoading) {
+  if (isRegulatorLoading) {
     return <p>Loading...</p>;
   }
 
-  const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    updateDomin({ id: DId, domain: values });
+  const onSubmitHandler: SubmitHandler<IUpdateRegulator> = (values) => {
+    const formData = new FormData();
+
+    formData.append("_method", "PUT");
+
+    if (values.name !== undefined) {
+      formData.append("name", values.name);
+    }
+    if (values.email_domain !== undefined) {
+      formData.append("email_domain", values.email_domain);
+    }
+    if (values.logo !== undefined) {
+      formData.append("logo", values.logo);
+    }
+
+    console.log(values);
+    updateRegulator({ id: DId, formData });
   };
 
   return (
@@ -101,7 +109,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/domains"
+          href="/regulators"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -121,7 +129,15 @@ const Edit = ({ params: { DId } }: PageProps) => {
                 <FormInput label="Name" type="text" name="name" />
               </div>
               <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
+                <FormInput label="Email" type="email" name="email_domain" />
+              </div>
+              <div className="flex flex-col items-center">
+                <FileUpLoader
+                  name="logo"
+                  multiple={false}
+                  label="select Logo"
+                  defaultUrl={getRegulator?.data.logo}
+                />
               </div>
               <div className="flex">
                 <SubmitButton

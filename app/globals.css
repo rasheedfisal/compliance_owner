@@ -93,6 +93,17 @@
   padding: 5px;
   width: 70px;
 }
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #fff !important;
+  background: var(--color-primary) !important;
+  border: 0px !important;
+  border-radius: 50%;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: var(--color-primary-light) !important;
+}
 
 @tailwind base;
 @tailwind components;
@@ -118,5 +129,33 @@
   input:invalid.invalid,
   textarea:invalid.invalid {
     @apply ring ring-danger-light dark:ring-danger;
+  }
+
+  /* .my-react-select-container {
+  } */
+  .my-react-select-container .my-react-select__control {
+    @apply bg-white dark:bg-dark border-[1.5px] border-gray-400 dark:border-dark hover:border-gray-400 dark:hover:border-dark;
+  }
+
+  .my-react-select-container .my-react-select__control--is-focused {
+    @apply border-gray-400 hover:border-gray-400 dark:border-dark dark:hover:border-dark shadow-none;
+  }
+
+  .my-react-select-container .my-react-select__menu {
+    @apply bg-white dark:bg-dark border-2 border-gray-400 dark:border-dark;
+  }
+
+  .my-react-select-container .my-react-select__option {
+    @apply text-primary dark:text-white bg-white hover:bg-gray-400 dark:bg-dark dark:hover:bg-primary-lighter;
+  }
+
+  .my-react-select-container .my-react-select__indicator-separator {
+    @apply bg-gray-400;
+  }
+
+  .my-react-select-container .my-react-select__input-container,
+  .my-react-select-container .my-react-select__placeholder,
+  .my-react-select-container .my-react-select__single-value {
+    @apply text-dark dark:text-white;
   }
 }

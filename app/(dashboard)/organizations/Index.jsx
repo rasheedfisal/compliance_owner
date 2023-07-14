@@ -28,9 +28,9 @@ const Index = () => {
   // });
   useUpdateEffect(() => {
     //initialize datatable
-    $("#domain_index").DataTable({
+    $("#org_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/domains",
+        url: "https://lets-comply-backend.auguma.io/admin/organizations",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,8 +41,11 @@ const Index = () => {
       columns: [
         // colum names..
         { data: "name", searchable: true, orderable: true },
+        { data: "email_domain", searchable: true, orderable: true },
+        { data: "type", searchable: true, orderable: true },
         { data: "code", searchable: true, orderable: true },
-        { data: "sub-domains", searchable: true, orderable: true },
+        { data: "staff", searchable: true, orderable: true },
+        { data: "assesments", searchable: true, orderable: true },
         { data: "created_at", searchable: true, orderable: true },
 
         { data: "actions", searchable: false, orderable: false },
@@ -52,21 +55,46 @@ const Index = () => {
         //{ targets: [0, 5] },
         // { className: "text-center", targets: [1, 2] },
         {
-          targets: [4],
+          targets: [0],
+          createdCell: (td, cellData, rowData) =>
+            createRoot(td).render(
+              <div className="flex items-center text-sm">
+                <div className="relative w-8 h-8 mr-3 rounded-full md:block">
+                  <img
+                    className="object-cover w-full h-full rounded-full"
+                    src={rowData.logo ?? "noImg.jpg"}
+                    alt="avatar"
+                    loading="lazy"
+                  />
+                  <div
+                    className="absolute inset-0 rounded-full shadow-inner"
+                    aria-hidden="true"
+                  ></div>
+                </div>
+                <div>
+                  <p className="font-semibold">{rowData.name}</p>
+                </div>
+              </div>
+            ),
+        },
+        {
+          targets: [7],
           createdCell: (td, cellData, rowData) =>
             createRoot(td).render(
               <div className="flex">
                 <button
                   className="w-4 mr-2 mt-1 transform rounded-md text-blue-700 hover:scale-110"
                   title="show"
-                  onClick={() => router.push(`/domains/show/${rowData.id}`)}
+                  onClick={() =>
+                    router.push(`/organizations/show/${rowData.id}`)
+                  }
                 >
                   <SearchIcon />
                 </button>
                 <button
                   className="w-4 mr-2 mt-1 transform rounded-md text-yellow-700 hover:scale-110"
                   title="edit"
-                  onClick={() => router.push(`/domains/${rowData.id}`)}
+                  onClick={() => router.push(`/organizations/${rowData.id}`)}
                 >
                   <EditIcon />
                 </button>
@@ -77,12 +105,15 @@ const Index = () => {
     });
   }, []);
   return (
-    <table id="domain_index" className="display compact pt-3">
+    <table id="org_index" className="display compact pt-3">
       <thead className="bg-primary text-white">
         <tr>
           <th>Name</th>
+          <th className="self-center">Email</th>
+          <th className="self-center">type</th>
           <th className="self-center">Code</th>
-          <th className="text-center">Sub Domains</th>
+          <th className="text-center">Staff</th>
+          <th className="text-center">Assessment</th>
           <th>Created At</th>
           <th></th>
         </tr>

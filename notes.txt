@@ -1,0 +1,7 @@
+- Get Trashed Endpoint must have actions as data;
+- add Trash-count endpoint in every module 
+- Sub-domain (create, move to trash, update) endpoints returns 500(internal server error) but still creates items 
+- add domain name in the show subdomain endpoint
+- subdomain trashed endpoint returns following :
+    Exception Message:\n\nAttempt to read property \"name\" on null
+- add selectable for (domain, subdomain)

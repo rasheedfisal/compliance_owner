@@ -1,19 +1,16 @@
 "use client";
 import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { object, string, TypeOf, z } from "zod";
+import { object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import SubmitButton from "@/components/SubmitButton";
-import {
-  ChevronDoubleLeftIcon,
-  DocumentPlusIcon,
-} from "@heroicons/react/24/solid";
-import FormInput from "@/components/FormInput";
+import { ChevronDoubleLeftIcon, TrashIcon } from "@heroicons/react/24/solid";
+import FormInputShow from "@/components/FormInputShow";
 import { useRouter } from "next/navigation";
-import { getDominFn, updateDomainFn } from "@/api/domainApi";
+import { getDominFn, moveDomainToTrashFn } from "@/api/domainApi";
 import { ICreateUpdateDomain } from "@/typings";
+import TrashedButton from "@/components/TrashedButton";
 import Link from "next/link";
 
 type PageProps = {
@@ -32,7 +29,7 @@ const updateDomainSchema = object({
     }),
 });
 
-const Edit = ({ params: { DId } }: PageProps) => {
+const Show = ({ params: { DId } }: PageProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { isLoading: isDomainLoading } = useQuery(
@@ -59,12 +56,11 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const { isLoading, mutate: updateDomin } = useMutation(
-    ({ id, domain }: { id: string; domain: ICreateUpdateDomain }) =>
-      updateDomainFn({ id, domain }),
+  const { isLoading, mutate: moveDomainToTrash } = useMutation(
+    ({ id }: { id: string }) => moveDomainToTrashFn({ id }),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["trashed-domains-count"]);
         toast.success(message);
         router.push("/domains");
       },
@@ -93,7 +89,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
   }
 
   const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    updateDomin({ id: DId, domain: values });
+    moveDomainToTrash({ id: DId });
   };
 
   return (
@@ -118,17 +114,17 @@ const Edit = ({ params: { DId } }: PageProps) => {
               onSubmit={methods.handleSubmit(onSubmitHandler)}
             >
               <div className="grid grid-cols-1">
-                <FormInput label="Name" type="text" name="name" />
+                <FormInputShow label="Name" type="text" name="name" />
               </div>
               <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
+                <FormInputShow label="Code" type="text" name="code" />
               </div>
-              <div className="flex">
-                <SubmitButton
-                  title="Submit"
+              <div>
+                <TrashedButton
+                  title="Move To Trash"
                   clicked={isLoading}
                   loadingTitle="loading..."
-                  icon={<DocumentPlusIcon className="h-5 w-5" />}
+                  icon={<TrashIcon className="h-5 w-5" />}
                 />
               </div>
             </form>
@@ -139,4 +135,4 @@ const Edit = ({ params: { DId } }: PageProps) => {
   );
 };
 
-export default Edit;
+export default Show;

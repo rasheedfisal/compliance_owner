@@ -1,19 +1,16 @@
 "use client";
 import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { object, string, TypeOf, z } from "zod";
+import { object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import SubmitButton from "@/components/SubmitButton";
-import {
-  ChevronDoubleLeftIcon,
-  DocumentPlusIcon,
-} from "@heroicons/react/24/solid";
-import FormInput from "@/components/FormInput";
+import { ChevronDoubleLeftIcon, TrashIcon } from "@heroicons/react/24/solid";
+import FormInputShow from "@/components/FormInputShow";
 import { useRouter } from "next/navigation";
-import { getDominFn, updateDomainFn } from "@/api/domainApi";
-import { ICreateUpdateDomain } from "@/typings";
+import { getControlsFn, moveControlsToTrashFn } from "@/api/controlsApi";
+import { ICreateUpdateControls } from "@/typings";
+import TrashedButton from "@/components/TrashedButton";
 import Link from "next/link";
 
 type PageProps = {
@@ -30,14 +27,15 @@ const updateDomainSchema = object({
     .refine((val) => !Number.isNaN(parseInt(val, 10)), {
       message: "Expected number, received a string",
     }),
+  sub_domain_id: string().min(1),
 });
 
-const Edit = ({ params: { DId } }: PageProps) => {
+const Show = ({ params: { DId } }: PageProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { isLoading: isDomainLoading } = useQuery(
-    ["domains", DId],
-    () => getDominFn(DId),
+  const { isLoading: isControlsLoading } = useQuery(
+    ["controls", DId],
+    () => getControlsFn(DId),
     {
       select: (data) => data,
       retry: 1,
@@ -46,6 +44,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
           methods.reset({
             name: data.name,
             code: data.code.toString(),
+            sub_domain_id: data.sub_domain_id.toString(),
           });
         }
       },
@@ -59,14 +58,13 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const { isLoading, mutate: updateDomin } = useMutation(
-    ({ id, domain }: { id: string; domain: ICreateUpdateDomain }) =>
-      updateDomainFn({ id, domain }),
+  const { isLoading, mutate: moveControlsToTrash } = useMutation(
+    ({ id }: { id: string }) => moveControlsToTrashFn({ id }),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["trashed-controls-count"]);
         toast.success(message);
-        router.push("/domains");
+        router.push("/controls");
       },
       onError: (error: any) => {
         if ((error as any).response?.data?.message) {
@@ -84,16 +82,16 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const methods = useForm<ICreateUpdateDomain>({
+  const methods = useForm<ICreateUpdateControls>({
     resolver: zodResolver(updateDomainSchema),
   });
 
-  if (isDomainLoading) {
+  if (isControlsLoading) {
     return <p>Loading...</p>;
   }
 
-  const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    updateDomin({ id: DId, domain: values });
+  const onSubmitHandler: SubmitHandler<ICreateUpdateControls> = (values) => {
+    moveControlsToTrash({ id: DId });
   };
 
   return (
@@ -101,7 +99,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/domains"
+          href="/controls"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -118,17 +116,24 @@ const Edit = ({ params: { DId } }: PageProps) => {
               onSubmit={methods.handleSubmit(onSubmitHandler)}
             >
               <div className="grid grid-cols-1">
-                <FormInput label="Name" type="text" name="name" />
+                <FormInputShow label="Name" type="text" name="name" />
               </div>
               <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
+                <FormInputShow label="Code" type="text" name="code" />
               </div>
-              <div className="flex">
-                <SubmitButton
-                  title="Submit"
+              <div className="grid grid-cols-1">
+                <FormInputShow
+                  label="Sub Domain ID"
+                  type="text"
+                  name="sub_domain_id"
+                />
+              </div>
+              <div>
+                <TrashedButton
+                  title="Move To Trash"
                   clicked={isLoading}
                   loadingTitle="loading..."
-                  icon={<DocumentPlusIcon className="h-5 w-5" />}
+                  icon={<TrashIcon className="h-5 w-5" />}
                 />
               </div>
             </form>
@@ -139,4 +144,4 @@ const Edit = ({ params: { DId } }: PageProps) => {
   );
 };
 
-export default Edit;
+export default Show;

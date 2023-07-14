@@ -2,6 +2,7 @@ import {
   HomeIcon,
   ShieldExclamationIcon,
   CubeTransparentIcon,
+  CurrencyBangladeshiIcon,
   HandRaisedIcon,
   AdjustmentsVerticalIcon,
   Cog6ToothIcon,
@@ -194,5 +195,25 @@ export const links: ILinksII[] = [
     title: "Domains",
     path: "/domains",
     icon: <CubeTransparentIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Sub Domains",
+    path: "/subdomains",
+    icon: <CurrencyBangladeshiIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Controls",
+    path: "/controls",
+    icon: <AdjustmentsVerticalIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Regulators",
+    path: "/regulators",
+    icon: <Cog6ToothIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Orgnanizations",
+    path: "/organizations",
+    icon: <HandRaisedIcon className="w-5 h-5" />,
   },
 ];

@@ -35,9 +35,35 @@ export const getDominFn = async (id: string) => {
   return response.data;
 };
 
-export const getTrashedDominFn = async () => {
-  const response = await privateAuthApi.get<IResponse<IResponse<number>>>(
+export const getTrashedDominCountFn = async () => {
+  const response = await privateAuthApi.get<IResponse<number>>(
     `/admin/domains/trashed-count`
+  );
+  return response.data;
+};
+
+export const getAllDominFn = async () => {
+  const response = await privateAuthApi.get<IResponse<IDomain[]>>(
+    `/selectables/domains`
+  );
+  return response.data;
+};
+
+export const moveDomainToTrashFn = async ({ id }: { id: string }) => {
+  const response = await privateAuthApi.delete<IResponse<[]>>(
+    `/admin/domains/${id}`
+  );
+  return response.data;
+};
+export const restoreDomainFn = async ({ id }: { id: string }) => {
+  const response = await privateAuthApi.post<IResponse<IDomainFull>>(
+    `/admin/domains/${id}/restore`
+  );
+  return response.data;
+};
+export const deleteDomainFn = async ({ id }: { id: string }) => {
+  const response = await privateAuthApi.delete<IResponse<[]>>(
+    `/admin/domains/${id}/delete`
   );
   return response.data;
 };

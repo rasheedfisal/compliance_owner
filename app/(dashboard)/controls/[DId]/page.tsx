@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { object, string, TypeOf, z } from "zod";
+import { object, string, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,9 +12,12 @@ import {
 } from "@heroicons/react/24/solid";
 import FormInput from "@/components/FormInput";
 import { useRouter } from "next/navigation";
-import { getDominFn, updateDomainFn } from "@/api/domainApi";
-import { ICreateUpdateDomain } from "@/typings";
+import { getControlsFn, updateControlsFn } from "@/api/controlsApi";
+import { getAllSubDominFn } from "@/api/subDomainApi";
+import { ICreateUpdateControls } from "@/typings";
+import FormSelect from "@/components/FormSelect";
 import Link from "next/link";
+import { IUpsertControls } from "../add/page";
 
 type PageProps = {
   params: {
@@ -22,7 +25,7 @@ type PageProps = {
   };
 };
 
-const updateDomainSchema = object({
+const updateControlsSchema = object({
   name: string().min(1, "Name is required"),
   code: z
     .string()
@@ -30,14 +33,35 @@ const updateDomainSchema = object({
     .refine((val) => !Number.isNaN(parseInt(val, 10)), {
       message: "Expected number, received a string",
     }),
+  subdomain: z.object({
+    label: z.string(),
+    value: z.string(),
+  }),
 });
 
 const Edit = ({ params: { DId } }: PageProps) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { isLoading: isDomainLoading } = useQuery(
-    ["domains", DId],
-    () => getDominFn(DId),
+
+  const {
+    isLoading: isSubDomainLoading,
+    isSuccess,
+    data: subdomains,
+  } = useQuery(["sub-domains"], () => getAllSubDominFn(), {
+    select: (data) => data,
+    retry: 1,
+    onError: (error) => {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+
+  const { isLoading: isControlsLoading } = useQuery(
+    ["controls", DId],
+    () => getControlsFn(DId),
     {
       select: (data) => data,
       retry: 1,
@@ -46,10 +70,14 @@ const Edit = ({ params: { DId } }: PageProps) => {
           methods.reset({
             name: data.name,
             code: data.code.toString(),
+            subdomain: {
+              value: data.sub_domain_id.toString(),
+            },
           });
         }
       },
       onError: (error) => {
+        console.log(error);
         if ((error as any).response?.data.message) {
           toast.error((error as any).response?.data.message, {
             position: "top-right",
@@ -59,14 +87,14 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const { isLoading, mutate: updateDomin } = useMutation(
-    ({ id, domain }: { id: string; domain: ICreateUpdateDomain }) =>
-      updateDomainFn({ id, domain }),
+  const { isLoading, mutate: updateControls } = useMutation(
+    ({ id, controls }: { id: string; controls: ICreateUpdateControls }) =>
+      updateControlsFn({ id, controls }),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["domains"]);
+        queryClient.invalidateQueries(["controls"]);
         toast.success(message);
-        router.push("/domains");
+        router.push("/controls");
       },
       onError: (error: any) => {
         if ((error as any).response?.data?.message) {
@@ -84,16 +112,23 @@ const Edit = ({ params: { DId } }: PageProps) => {
     }
   );
 
-  const methods = useForm<ICreateUpdateDomain>({
-    resolver: zodResolver(updateDomainSchema),
+  const methods = useForm<IUpsertControls>({
+    resolver: zodResolver(updateControlsSchema),
   });
 
-  if (isDomainLoading) {
+  if (isControlsLoading) {
     return <p>Loading...</p>;
   }
 
-  const onSubmitHandler: SubmitHandler<ICreateUpdateDomain> = (values) => {
-    updateDomin({ id: DId, domain: values });
+  const onSubmitHandler: SubmitHandler<IUpsertControls> = (values) => {
+    updateControls({
+      id: DId,
+      controls: {
+        name: values.name,
+        code: values.code,
+        sub_domain_id: values.subdomain.value,
+      },
+    });
   };
 
   return (
@@ -101,7 +136,7 @@ const Edit = ({ params: { DId } }: PageProps) => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/domains"
+          href="/controls"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -122,6 +157,23 @@ const Edit = ({ params: { DId } }: PageProps) => {
               </div>
               <div className="grid grid-cols-1">
                 <FormInput label="Code" type="text" name="code" />
+              </div>
+              <div className="grid grid-cols-1">
+                <FormSelect
+                  label="Sub Domains"
+                  name="subdomain"
+                  isLoading={isSubDomainLoading}
+                  data={
+                    isSuccess
+                      ? subdomains.data.map(({ id, name }) => ({
+                          value: id.toString(),
+                          label: name,
+                        }))
+                      : []
+                  }
+                  isMulti={false}
+                  isRtl={false}
+                />
               </div>
               <div className="flex">
                 <SubmitButton
