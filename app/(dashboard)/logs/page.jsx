@@ -27,7 +27,7 @@ const Manage = () => {
             </div>
           </div>
         </div>
-        <div className="block w-full overflow-x-auto">
+        <div className="block">
           <div className="mb-3">
             <RadioGroup
               onChange={(option) => setFilter(option)}
@@ -59,7 +59,7 @@ const Manage = () => {
               ]}
             />
           </div>
-          <div class="table-responsive">
+          <div class="overflow-x-auto">
             <Index filter={filter} />
           </div>
         </div>

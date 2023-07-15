@@ -113,6 +113,24 @@
   background: var(--color-primary);
 }
 
+td.details-control {
+  /* Image in the first column to
+      indicate expand*/
+  background: url("/chevron-up.svg") no-repeat center;
+
+  cursor: pointer;
+}
+
+tr.shown td.details-control {
+  background: url("/chevron-down.svg") no-repeat center;
+}
+
+/* table td {
+  word-break: break-word;
+  vertical-align: top;
+  white-space: normal !important;
+} */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

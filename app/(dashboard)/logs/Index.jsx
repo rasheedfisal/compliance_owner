@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
 import { createRoot } from "react-dom/client";
+import { PlayCircleIcon } from "@heroicons/react/24/solid";
 
 //Bootstrap and jQuery libraries
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery/dist/jquery.min.js";
-
 //Datatable Modules
 import "datatables.net-dt/js/dataTables.dataTables";
+import "datatables.net-responsive/js/dataTables.responsive";
 
 import $ from "jquery";
 import Cookies from "js-cookie";
@@ -27,13 +28,17 @@ const Index = ({ filter }) => {
   const token = Cookies.get("AT");
   useUpdateEffect(() => {
     //initialize datatable
-    $("#logs_index").DataTable({
+    var table = $("#logs_index").DataTable({
       ajax: {
         url: `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
       },
+      responsive: true,
+      autoWidth: false,
+      order: [1, "asc"],
+
       search: { smart: true },
       processing: true,
       serverSide: true,
