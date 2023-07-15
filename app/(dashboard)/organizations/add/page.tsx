@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import FileUpLoader from "@/components/FileUploader";
 import FormSelect from "@/components/FormSelect";
 import { createOrgSchema } from "@/schema/orgSchema";
+import { useState } from "react";
 
 export type ICreateOrg = TypeOf<typeof createOrgSchema>;
 

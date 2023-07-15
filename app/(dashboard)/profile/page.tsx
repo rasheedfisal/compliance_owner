@@ -8,6 +8,7 @@ import FormInput from "@/components/FormInput";
 import FileUpLoader from "@/components/FileUploader";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { useState } from "react";
+import VerfiedBadge from "@/components/VerfiedBadge";
 
 const MAX_FILE_SIZE = 500000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -65,15 +66,15 @@ const Profile = () => {
     resolver: zodResolver(updateUserSchema),
   });
 
-  const VerfiedBadge = stateContext.state.authUser?.email_verified_at ? (
-    <span className="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
-      Verified
-    </span>
-  ) : (
-    <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
-      Not Verfied
-    </span>
-  );
+  // const VerfiedBadge = stateContext.state.authUser?.email_verified_at ? (
+  //   <span className="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">
+  //     Verified
+  //   </span>
+  // ) : (
+  //   <span className="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-red-900 dark:text-red-300">
+  //     Not Verfied
+  //   </span>
+  // );
 
   return (
     <>
@@ -86,7 +87,12 @@ const Profile = () => {
             {/* <div className="w-full relative px-4 py-6 space-y-6 bg-white rounded-md dark:bg-darker"> */}
             <div className="flex justify-between">
               <span className="text-xl font-semibold block">
-                {stateContext.state.authUser?.role} {VerfiedBadge}
+                {stateContext.state.authUser?.role}{" "}
+                {
+                  <VerfiedBadge
+                    verfiedDate={stateContext.state.authUser?.email_verified_at}
+                  />
+                }
               </span>
               {/* <a
                 href="#"
