@@ -21,7 +21,7 @@ const RadioGroup = ({ options, onChange, value, labelText }: IProps) => {
       <div className="flex justify-evenly flex-wrap gap-3">
         {options.map((el, index) => (
           <Option
-            key={index}
+            key={`el_${index}`}
             index={index}
             selectedIndex={selectedIndex}
             onSelect={(index) => onSelect(index)}

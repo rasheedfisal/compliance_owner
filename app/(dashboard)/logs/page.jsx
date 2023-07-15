@@ -32,27 +32,27 @@ const Manage = () => {
             <RadioGroup
               onChange={(option) => setFilter(option)}
               options={[
-                <div className="flex flex-1 justify-around">
+                <div key={0} className="flex flex-1 justify-around">
                   <span>All</span>
                   <FunnelIcon className="w-4" />
                 </div>,
-                <div className="flex  flex-1 justify-around">
+                <div key={1} className="flex  flex-1 justify-around">
                   <span>This Week</span>
                   <CalendarDaysIcon className="w-4" />
                 </div>,
-                <div className="flex  flex-1 justify-around">
+                <div key={2} className="flex  flex-1 justify-around">
                   <span>This Month</span>
                   <CalendarDaysIcon className="w-4" />
                 </div>,
-                <div className="flex  flex-1 justify-around">
+                <div key={3} className="flex  flex-1 justify-around">
                   <span>By Model</span>
                   <AdjustmentsHorizontalIcon className="w-4" />
                 </div>,
-                <div className="flex  flex-1 justify-around">
+                <div key={4} className="flex  flex-1 justify-around">
                   <span>By User</span>
                   <UserIcon className="w-4" />
                 </div>,
-                <div className="flex  flex-1 justify-around">
+                <div key={5} className="flex  flex-1 justify-around">
                   <span>Multiple</span>
                   <AdjustmentsHorizontalIcon className="w-4" />
                 </div>,
