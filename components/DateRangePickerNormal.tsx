@@ -1,23 +1,27 @@
-import { useRef, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { DateRange, Range } from "react-date-range";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 
 import format from "date-fns/format";
-import { addDays } from "date-fns";
 
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { assertIsNode } from "@/utility/helpers";
 
-const DateRangePickerNormal = () => {
+type ComponentProps = {
+  setRange: Dispatch<SetStateAction<Range[]>>;
+  range: Range[];
+};
+
+const DateRangePickerNormal = ({ range, setRange }: ComponentProps) => {
   // date state
-  const [range, setRange] = useState<Range[]>([
-    {
-      startDate: new Date(),
-      endDate: addDays(new Date(), 7),
-      key: "selection",
-    },
-  ]);
+  // const [range, setRange] = useState<Range[]>([
+  //   {
+  //     startDate: new Date(),
+  //     endDate: addDays(new Date(), 7),
+  //     key: "selection",
+  //   },
+  // ]);
 
   // open close
   const [open, setOpen] = useState(false);

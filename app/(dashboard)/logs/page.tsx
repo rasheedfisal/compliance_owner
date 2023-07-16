@@ -8,7 +8,14 @@ import {
   AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/solid";
 import RadioGroup from "@/components/RadioGroup";
-import DateRangePickerNormal from "@/components/DateRangePickerNormal";
+import DateRangePicker from "@/components/DateRangePickerAdvance";
+import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { getModelsFn } from "@/api/selectablesApi";
+import Select from "react-select";
+import { AnimatePresence, motion } from "framer-motion";
+import { addDays } from "date-fns";
+import { Range } from "react-date-range";
 const Index = dynamic(
   () => {
     return import("./Index");
@@ -18,6 +25,35 @@ const Index = dynamic(
 
 const Manage = () => {
   const [filter, setFilter] = useState(0);
+  const [model, setModel] = useState("all");
+  const [range, setRange] = useState<Range[]>([
+    {
+      startDate: new Date(),
+      endDate: addDays(new Date(), 7),
+      key: "selection",
+    },
+  ]);
+
+  const {
+    isLoading: isModelLoading,
+    isSuccess,
+    data: models,
+  } = useQuery(["models"], () => getModelsFn(), {
+    select: (data) => data,
+    retry: 1,
+    enabled: filter === 3 || filter === 5,
+    onSuccess(data) {
+      console.log(data.data);
+    },
+    onError: (error) => {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+
   return (
     <div className="grid grid-cols-1 p-4">
       <div className="w-full px-4 py-6 bg-white rounded-md dark:bg-darker">
@@ -60,11 +96,88 @@ const Manage = () => {
               ]}
             />
           </div>
-          <div className="mb-3 flex justify-center relative">
-            <DateRangePickerNormal />
+          <div className="mb-3 flex gap-3 justify-center">
+            <AnimatePresence>
+              {(filter === 3 || filter === 5) && (
+                <motion.div
+                  key={2}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      ease: "easeOut",
+                      duration: 0.3,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 20,
+                    transition: {
+                      ease: "easeIn",
+                      duration: 0.2,
+                    },
+                  }}
+                  className="flex flex-col"
+                >
+                  <span>Model</span>
+                  <Select
+                    classNames={{
+                      control: () =>
+                        "py-[.1rem] border rounded-md dark:bg-darker dark:border-gray-700 focus:outline-none focus:ring focus:ring-primary-100 dark:focus:ring-primary-darker",
+                    }}
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
+                    options={
+                      isSuccess
+                        ? models.data.map((item) => ({
+                            value: item,
+                            label: item,
+                          }))
+                        : []
+                    }
+                    onChange={(e) => setModel(e?.value ?? "all")}
+                    isClearable={true}
+                    isLoading={isModelLoading}
+                  />
+                </motion.div>
+              )}
+
+              {filter === 5 && (
+                <motion.div
+                  key={1}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      ease: "easeOut",
+                      duration: 0.3,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 20,
+                    transition: {
+                      ease: "easeIn",
+                      duration: 0.2,
+                    },
+                  }}
+                  className="flex flex-col relative"
+                >
+                  <span>Date Range</span>
+                  <DateRangePicker range={range} setRange={setRange} />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div className="overflow-x-auto">
-            <Index filter={filter} />
+            <Index
+              filter={filter}
+              model={model}
+              datefrom={range[0].startDate}
+              dateto={range[0].endDate}
+            />
           </div>
         </div>
       </div>

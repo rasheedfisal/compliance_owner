@@ -14,40 +14,18 @@ import "datatables.net-responsive/js/dataTables.responsive";
 import $ from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
-import { toast } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
-import { getModelsFn } from "@/api/selectablesApi";
 
 const logFilter = {
   0: "log",
   1: "log/this-week",
   2: "log/this-month",
-  3: "log/model/auth",
+  3: "log/model",
   4: "log/user/1",
   5: "log/multiple-filters",
 };
 
-const Index = ({ filter }) => {
+const Index = ({ filter, model, datefrom, dateto }) => {
   const token = Cookies.get("AT");
-
-  const {
-    isLoading: isModelLoading,
-    isSuccess,
-    data: models,
-  } = useQuery(["models"], () => getModelsFn(), {
-    select: (data) => data,
-    retry: 1,
-    onSuccess(data) {
-      console.log(data.data);
-    },
-    onError: (error) => {
-      if (error.response?.data?.msg) {
-        toast.error(error.response?.data?.msg, {
-          position: "top-right",
-        });
-      }
-    },
-  });
 
   useUpdateEffect(() => {
     //initialize datatable
@@ -80,13 +58,31 @@ const Index = ({ filter }) => {
   }, []);
 
   useUpdateEffect(() => {
-    $("#logs_index")
-      .DataTable()
-      .ajax.url(
-        `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`
-      )
-      .load();
-  }, [filter]);
+    if (filter === 3) {
+      if (model !== "all") {
+        $("#logs_index")
+          .DataTable()
+          .ajax.url(
+            `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}/${model}`
+          )
+          .load();
+      }
+    } else if (filter === 5) {
+      $("#logs_index")
+        .DataTable()
+        .ajax.url(
+          `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}?user_id=&from=${datefrom}&to=${dateto}&model=${model}`
+        )
+        .load();
+    } else {
+      $("#logs_index")
+        .DataTable()
+        .ajax.url(
+          `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`
+        )
+        .load();
+    }
+  }, [filter, model, dateto]);
   return (
     <table id="logs_index" className="display compact pt-3">
       <thead className="bg-primary text-white">
