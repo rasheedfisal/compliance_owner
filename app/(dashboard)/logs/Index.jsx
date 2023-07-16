@@ -2,6 +2,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { PlayCircleIcon } from "@heroicons/react/24/solid";
+import DataTable from "datatables.net-dt";
 
 //Bootstrap and jQuery libraries
 // import "bootstrap/dist/css/bootstrap.min.css";
@@ -13,6 +14,9 @@ import "datatables.net-responsive/js/dataTables.responsive";
 import $ from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
+import { toast } from "react-toastify";
+import { useQuery } from "@tanstack/react-query";
+import { getModelsFn } from "@/api/selectablesApi";
 
 const logFilter = {
   0: "log",
@@ -24,11 +28,30 @@ const logFilter = {
 };
 
 const Index = ({ filter }) => {
-  console.log(logFilter[filter]);
   const token = Cookies.get("AT");
+
+  const {
+    isLoading: isModelLoading,
+    isSuccess,
+    data: models,
+  } = useQuery(["models"], () => getModelsFn(), {
+    select: (data) => data,
+    retry: 1,
+    onSuccess(data) {
+      console.log(data.data);
+    },
+    onError: (error) => {
+      if (error.response?.data?.msg) {
+        toast.error(error.response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+
   useUpdateEffect(() => {
     //initialize datatable
-    var table = $("#logs_index").DataTable({
+    $("#logs_index").DataTable({
       ajax: {
         url: `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`,
         headers: {

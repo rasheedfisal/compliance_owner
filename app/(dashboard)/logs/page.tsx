@@ -8,6 +8,7 @@ import {
   AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/solid";
 import RadioGroup from "@/components/RadioGroup";
+import DateRangePickerNormal from "@/components/DateRangePickerNormal";
 const Index = dynamic(
   () => {
     return import("./Index");
@@ -59,7 +60,10 @@ const Manage = () => {
               ]}
             />
           </div>
-          <div class="overflow-x-auto">
+          <div className="mb-3 flex justify-center relative">
+            <DateRangePickerNormal />
+          </div>
+          <div className="overflow-x-auto">
             <Index filter={filter} />
           </div>
         </div>

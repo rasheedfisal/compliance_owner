@@ -131,6 +131,31 @@ tr.shown td.details-control {
   white-space: normal !important;
 } */
 
+/* Date Pickers */
+
+/* input.inputBox {
+  font-size: 15px;
+  padding: 5px 8px 4px 8px;
+  border-radius: 5%;
+  border: 1px solid lightgrey;
+  color: inherit;
+} */
+
+.calendarWrap {
+  display: inline-block;
+  position: relative;
+  width: 33.5%;
+}
+
+.calendarElement {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 40px;
+  border: 1px solid #ccc;
+  z-index: 999;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

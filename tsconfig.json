@@ -28,7 +28,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/(dashboard)/domains/trash/page.jsx"
+    "app/(dashboard)/domains/trash/page.jsx",
+    "app/(dashboard)/logs/Index.jsx"
   ],
   "exclude": ["node_modules"]
 }
