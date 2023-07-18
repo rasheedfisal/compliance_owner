@@ -79,7 +79,7 @@ const Index = () => {
           createdCell: (td, cellData, rowData) =>
             createRoot(td).render(
               <div className="flex items-center">
-                <CompletedBadge />
+                <CompletedBadge isComplete={rowData.is_complete} />
               </div>
             ),
         },
