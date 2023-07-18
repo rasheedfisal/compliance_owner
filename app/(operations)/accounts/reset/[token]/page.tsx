@@ -40,10 +40,15 @@ const Reset = ({ params: { token } }: PageProps) => {
         router.push("/login");
       },
       onError: (error: any) => {
-        if ((error as any).response?.data?.msg) {
-          toast.error((error as any).response?.data?.msg, {
+        if ((error as any).response?.data.message) {
+          toast.error((error as any).response?.data.message, {
             position: "top-right",
           });
+          (error as any).response?.data.data.map((msg: string) =>
+            toast.error(msg, {
+              position: "top-right",
+            })
+          );
         }
       },
     }

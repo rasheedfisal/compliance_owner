@@ -73,6 +73,11 @@ const Login = () => {
           toast.error((error as any).response?.data.message, {
             position: "top-right",
           });
+          (error as any).response?.data.data.map((msg: string) =>
+            toast.error(msg, {
+              position: "top-right",
+            })
+          );
         }
       },
     }
