@@ -74,6 +74,7 @@ const Register = ({ params: { token } }: PageProps) => {
     {
       onSuccess: ({ message }) => {
         toast.success(message);
+        router.push("/login");
       },
       onError: (error: any) => {
         if ((error as any).response?.data.message) {

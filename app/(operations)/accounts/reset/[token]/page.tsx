@@ -35,8 +35,8 @@ const Reset = ({ params: { token } }: PageProps) => {
   const { mutate: forgetPassword, isLoading } = useMutation(
     (userData: IResetPassword) => resetPasswordFn(userData),
     {
-      onSuccess: (data) => {
-        toast.success("Sucess: check your email for verfication link");
+      onSuccess: ({ data, message }) => {
+        toast.success(message);
         router.push("/login");
       },
       onError: (error: any) => {
