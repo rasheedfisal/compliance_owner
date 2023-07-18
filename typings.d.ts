@@ -146,3 +146,30 @@ export interface IOrganization {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface IOnBoardings {
+  id: number;
+  regulator_id: string;
+  organization_id: string;
+  email: string;
+  is_complete: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface ICreateUpdateOnboarding {
+  regulator_id: string;
+  organization_id: string;
+  email: string;
+}
+
+export interface IResetPassword {
+  token: string;
+  password: string;
+  confirm: string;
+}
+
+export interface IOnBoardingsFullInfo extends IOnBoardings {
+  organization: IOrganization;
+  regulator: IRegulators;
+}

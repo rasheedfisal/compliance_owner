@@ -27,7 +27,7 @@ type NavProps = {
   OpenUserProfilePanel: MouseEventHandler;
   openUserProfile: boolean;
   userMenuRef: RefObject<HTMLDivElement>;
-  handleUserSpace: KeyboardEventHandler<HTMLDivElement>;
+  handleUserSpace: MouseEventHandler;
   handleSideMenuSpace: KeyboardEventHandler<HTMLDivElement>;
 };
 

@@ -14,6 +14,7 @@ import FormInput2 from "@/components/FormInput2";
 import SubmitButton from "@/components/SubmitButton";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
+import Link from "next/link";
 
 const loginSchema = object({
   email: string()
@@ -123,12 +124,12 @@ const Login = () => {
               </span>
             </label>
 
-            {/* <Link
+            <Link
               href="/forget"
               className="text-sm text-blue-600 hover:underline"
             >
-              Forgot Password?
-            </Link> */}
+              {"Forgot Password?"}
+            </Link>
           </div>
           <div>
             {/* <button

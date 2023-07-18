@@ -51,8 +51,8 @@ const Edit = ({ params: { DId } }: PageProps) => {
     select: (data) => data,
     retry: 1,
     onError: (error) => {
-      if ((error as any).response?.data?.msg) {
-        toast.error((error as any).response?.data?.msg, {
+      if ((error as any).response?.data?.message) {
+        toast.error((error as any).response?.data?.message, {
           position: "top-right",
         });
       }

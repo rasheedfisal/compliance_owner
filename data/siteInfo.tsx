@@ -7,6 +7,8 @@ import {
   AdjustmentsVerticalIcon,
   Cog6ToothIcon,
   DocumentTextIcon,
+  InboxIcon,
+  InboxStackIcon,
 } from "@heroicons/react/24/solid";
 
 interface ILinks {
@@ -61,5 +63,10 @@ export const links: ILinksII[] = [
     title: "Logs",
     path: "/logs",
     icon: <DocumentTextIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Onboardings",
+    path: "/onboardings",
+    icon: <InboxIcon className="w-5 h-5" />,
   },
 ];

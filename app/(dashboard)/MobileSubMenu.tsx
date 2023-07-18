@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import React, { KeyboardEventHandler, MouseEventHandler } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { logoutUserFn } from "@/api/authApi";
@@ -75,7 +75,7 @@ const MobileSubMenu = ({
     >
       <div className="space-x-2">
         {/* <!-- Toggle dark theme button --> x-cloak @click="toggleTheme"*/}
-        <button
+        {/* <button
           aria-hidden="true"
           className="relative focus:outline-none"
           onClick={toggleTheme}
@@ -127,7 +127,7 @@ const MobileSubMenu = ({
               />
             </svg>
           </div>
-        </button>
+        </button> */}
 
         {/* <!-- Notification button --> */}
         <button
@@ -159,7 +159,7 @@ const MobileSubMenu = ({
         </button>
 
         {/* <!-- Search button --> */}
-        <button
+        {/* <button
           onClick={openSearchPanel}
           // @click="openSearchPanel(); $nextTick(() => { $refs.searchInput.focus(); setTimeout(() => {isMobileSubMenuOpen= false}, 100) })"
           className="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
@@ -180,10 +180,10 @@ const MobileSubMenu = ({
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-        </button>
+        </button> */}
 
         {/* <!-- Settings button --> */}
-        <button
+        {/* <button
           onClick={openSettingsPanel}
           // @click="openSettingsPanel(); $nextTick(() => { isMobileSubMenuOpen = false })"
           className="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
@@ -209,7 +209,7 @@ const MobileSubMenu = ({
               d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
 
       {/* <!-- User avatar button --> x-data="{ open: false }"*/}
@@ -224,84 +224,86 @@ const MobileSubMenu = ({
           className="block transition-opacity duration-200 rounded-full dark:opacity-75 dark:hover:opacity-100 focus:outline-none focus:ring dark:focus:opacity-100"
         >
           <span className="sr-only">User menu</span>
-          {/* <Image className="w-10 h-10 rounded-full" src={avatar} alt="avatar" /> */}
-          <img
-            className="w-10 h-10 rounded-full"
-            src={"/noImg.jpg"}
-            alt="avatar"
-          />
+          <span className="relative inline-flex items-center justify-center w-11 h-11 p-2 overflow-hidden text-primary-lighter bg-primary-50 rounded-full hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker">
+            <span className="font-bold text-primary-lighter dark:text-gray-300">
+              {stateContext.state.authUser?.name.substring(0, 2).toUpperCase()}
+            </span>
+          </span>
         </button>
         {/* <!-- User dropdown menu --> */}
-        {openUserProfile && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              transition: {
-                ease: "easeOut",
-                duration: 0.3,
-              },
-            }}
-            exit={{
-              opacity: 0,
-              y: 20,
-              transition: {
-                ease: "easeIn",
-                duration: 0.2,
-              },
-            }}
-            className={`absolute right-0 w-48 py-1 origin-top-right bg-white rounded-md shadow-lg top-12 ring-1 ring-black ring-opacity-5 dark:bg-dark`}
-            role="menu"
-            aria-orientation="vertical"
-            aria-label="User menu"
-          >
-            <Link
-              href="/profile"
-              role="menuitem"
-              className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
+        <AnimatePresence>
+          {openUserProfile && (
+            <motion.div
+              key={1}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  ease: "easeOut",
+                  duration: 0.3,
+                },
+              }}
+              exit={{
+                opacity: 0,
+                y: 20,
+                transition: {
+                  ease: "easeIn",
+                  duration: 0.2,
+                },
+              }}
+              className={`absolute right-0 w-48 py-1 origin-top-right bg-white rounded-md shadow-lg top-12 ring-1 ring-black ring-opacity-5 dark:bg-dark`}
+              role="menu"
+              aria-orientation="vertical"
+              aria-label="User menu"
             >
-              Your Profile
-            </Link>
-            {/* <a
+              <Link
+                href="/profile"
+                role="menuitem"
+                className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
+              >
+                Your Profile
+              </Link>
+              {/* <a
               href="#"
               role="menuitem"
               className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
             >
               Settings
             </a> */}
-            <span
-              onClick={() => logoutUser()}
-              role="menuitem"
-              className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary cursor-pointer"
-            >
-              {isLoading ? (
-                <svg
-                  className="w-6 h-6 mr-3 -ml-1 animate-spin"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                "logout"
-              )}
-            </span>
-          </motion.div>
-        )}
+              <span
+                onClick={() => logoutUser()}
+                role="menuitem"
+                className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary cursor-pointer"
+              >
+                {isLoading ? (
+                  <svg
+                    className="w-6 h-6 mr-3 -ml-1 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  "logout"
+                )}
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.nav>
   );

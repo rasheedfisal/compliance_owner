@@ -20,11 +20,11 @@ const logFilter = {
   1: "log/this-week",
   2: "log/this-month",
   3: "log/model",
-  4: "log/user/1",
+  4: "log/user",
   5: "log/multiple-filters",
 };
 
-const Index = ({ filter, model, datefrom, dateto }) => {
+const Index = ({ filter, model, datefrom, dateto, userId }) => {
   const token = Cookies.get("AT");
 
   useUpdateEffect(() => {
@@ -48,8 +48,8 @@ const Index = ({ filter, model, datefrom, dateto }) => {
         { data: "user", searchable: true, orderable: true },
         { data: "model", searchable: true, orderable: true },
         { data: "type", searchable: true, orderable: true },
-        { data: "action", searchable: true, orderable: true },
         { data: "created_at", searchable: true, orderable: true },
+        { data: "action", searchable: true, orderable: true },
       ],
       columnDefs: [
         // difinition and styling
@@ -64,6 +64,15 @@ const Index = ({ filter, model, datefrom, dateto }) => {
           .DataTable()
           .ajax.url(
             `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}/${model}`
+          )
+          .load();
+      }
+    } else if (filter === 4) {
+      if (userId !== 0) {
+        $("#logs_index")
+          .DataTable()
+          .ajax.url(
+            `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}/${userId}`
           )
           .load();
       }
@@ -82,7 +91,7 @@ const Index = ({ filter, model, datefrom, dateto }) => {
         )
         .load();
     }
-  }, [filter, model, dateto]);
+  }, [filter, model, dateto, userId]);
   return (
     <table id="logs_index" className="display compact pt-3">
       <thead className="bg-primary text-white">
@@ -90,8 +99,8 @@ const Index = ({ filter, model, datefrom, dateto }) => {
           <th className="text-center">User</th>
           <th>model</th>
           <th className="self-center">Type</th>
-          <th className="text-center">Action</th>
           <th>Created At</th>
+          <th className="text-center">Action</th>
         </tr>
       </thead>
     </table>

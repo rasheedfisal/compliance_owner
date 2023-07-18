@@ -48,7 +48,7 @@ const SideBar = ({ openSettingsPanel }: SidebarProps) => {
         </nav>
 
         {/* <!-- Sidebar footer --> */}
-        <div className="flex-shrink-0 px-2 py-4 space-y-2">
+        {/* <div className="flex-shrink-0 px-2 py-4 space-y-2">
           <button
             // @click="openSettingsPanel"
             onClick={openSettingsPanel}
@@ -73,7 +73,7 @@ const SideBar = ({ openSettingsPanel }: SidebarProps) => {
             </span>
             <span>Customize</span>
           </button>
-        </div>
+        </div> */}
       </div>
     </motion.aside>
   );

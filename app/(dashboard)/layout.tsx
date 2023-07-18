@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, MouseEventHandler } from "react";
 import Backdrop from "@/components/Backdrop";
 import SettingPanel from "@/components/SettingPanel";
 import { motion, AnimatePresence, useCycle } from "framer-motion";
@@ -66,19 +66,20 @@ export default function RootLayout({
   };
 
   const OpenUserProfilePanel = () => {
+    console.log("first");
+    // if (openUserProfile) {
+    userMenuRef?.current?.focus();
+    //}
     setOpenUserProfile();
-    if (openUserProfile) {
-      userMenuRef?.current?.focus();
-    }
   };
   const openSearchPanel = () => {
     searchInputRef?.current?.focus();
     setIsSearchPanelOpen();
   };
-  const handleUserSpace = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "32") {
-      setOpenUserProfile();
-    }
+  const handleUserSpace = () => {
+    // if (e.key === "32") {
+    setOpenUserProfile();
+    //}
   };
   const handleSideMenuSpace = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "32") {
@@ -189,7 +190,7 @@ export default function RootLayout({
         {/* Panels and Backdrops */}
 
         <AnimatePresence>
-          {openSetting && (
+          {/* {openSetting && (
             <>
               <Backdrop
                 isOpen={openSetting}
@@ -204,7 +205,7 @@ export default function RootLayout({
                 // setSelectedColor={setSelectedColor}
               />
             </>
-          )}
+          )} */}
 
           {isNotificationsPanelOpen && (
             <>
@@ -219,7 +220,7 @@ export default function RootLayout({
             </>
           )}
 
-          {isSearchPanelOpen && (
+          {/* {isSearchPanelOpen && (
             <>
               <Backdrop
                 isOpen={isSearchPanelOpen}
@@ -230,7 +231,7 @@ export default function RootLayout({
                 SearchPanelRef={searchInputRef}
               />
             </>
-          )}
+          )} */}
         </AnimatePresence>
       </div>
     </div>

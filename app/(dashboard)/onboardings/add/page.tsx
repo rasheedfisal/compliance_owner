@@ -13,55 +13,70 @@ import { DocumentPlusIcon } from "@heroicons/react/24/solid";
 
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
-import { createControlsFn } from "@/api/controlsApi";
+import { createOnboardingsFn } from "@/api/onboardingsApi";
 import { getAllSubDominFn } from "@/api/subDomainApi";
-import { ICreateUpdateControls } from "@/typings";
+import { ICreateUpdateControls, ICreateUpdateOnboarding } from "@/typings";
 import { useRouter } from "next/navigation";
 import FormSelect from "@/components/FormSelect";
+import {
+  getOrganizationListFn,
+  getRegulatorListFn,
+} from "@/api/selectablesApi";
 
-const createUpdateContrlsSchema = object({
-  name: string().min(1, "Name is required"),
-  code: z
-    .string()
-    .min(1, "Code is Required")
-    .refine((val) => !Number.isNaN(parseInt(val, 10)), {
-      message: "Expected number, received a string",
-    }),
-  subdomain: z.object({
+const createUpdateOnboardingSchema = object({
+  email: string().min(1, "Email is required").email(),
+  regulator: z.object({
+    label: z.string(),
+    value: z.string(),
+  }),
+  org: z.object({
     label: z.string(),
     value: z.string(),
   }),
 });
 
-export type IUpsertControls = TypeOf<typeof createUpdateContrlsSchema>;
+export type IUpsertOnboarding = TypeOf<typeof createUpdateOnboardingSchema>;
 
 const Add = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
   const {
-    isLoading: isDomainLoading,
-    isSuccess,
-    data: subdomains,
-  } = useQuery(["sub-domains"], () => getAllSubDominFn(), {
-    select: (data) => data,
+    isLoading: isOrgLoading,
+    isSuccess: isOrgSuccess,
+    data: orgList,
+  } = useQuery(["organizations-list"], () => getOrganizationListFn(), {
     retry: 1,
     onError: (error) => {
-      if ((error as any).response?.data?.message) {
-        toast.error((error as any).response?.data?.message, {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+  const {
+    isLoading: isRegulatorLoading,
+    isSuccess: isRegultorSuccess,
+    data: regulatorList,
+  } = useQuery(["regulators-list"], () => getRegulatorListFn(), {
+    retry: 1,
+    onError: (error) => {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
           position: "top-right",
         });
       }
     },
   });
 
-  const { isLoading, mutate: createControls } = useMutation(
-    (subdomain: ICreateUpdateControls) => createControlsFn(subdomain),
+  const { isLoading, mutate: createOnboarding } = useMutation(
+    (onboarding: ICreateUpdateOnboarding) => createOnboardingsFn(onboarding),
     {
       onSuccess: ({ message }) => {
-        queryClient.invalidateQueries(["controls"]);
+        queryClient.invalidateQueries(["onboardings"]);
         toast.success(message);
-        router.push("/controls");
+        router.push("/onboardings");
       },
       onError: (error: any) => {
         if ((error as any).response?.data.message) {
@@ -78,27 +93,27 @@ const Add = () => {
     }
   );
 
-  const methods = useForm<IUpsertControls>({
-    resolver: zodResolver(createUpdateContrlsSchema),
+  const methods = useForm<IUpsertOnboarding>({
+    resolver: zodResolver(createUpdateOnboardingSchema),
   });
   const {
     formState: { isSubmitSuccessful },
   } = methods;
 
-  useUpdateEffect(() => {
-    if (isSubmitSuccessful) {
-      methods.reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubmitSuccessful]);
+  // useUpdateEffect(() => {
+  //   if (isSubmitSuccessful) {
+  //     methods.reset();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [isSubmitSuccessful]);
 
-  const onSubmitHandler: SubmitHandler<IUpsertControls> = (values) => {
-    const subDomain: ICreateUpdateControls = {
-      name: values.name,
-      code: values.code,
-      sub_domain_id: values.subdomain.value,
+  const onSubmitHandler: SubmitHandler<IUpsertOnboarding> = (values) => {
+    const onboarding: ICreateUpdateOnboarding = {
+      email: values.email,
+      regulator_id: values.regulator.value,
+      organization_id: values.org.value,
     };
-    createControls(subDomain);
+    createOnboarding(onboarding);
   };
 
   return (
@@ -106,7 +121,7 @@ const Add = () => {
       {/* <!-- Content header --> */}
       <div className="flex items-center justify-end px-4 py-4 border-b lg:py-6 dark:border-primary-darker">
         <Link
-          href="/controls"
+          href="/onboardings"
           className="px-4 py-2 flex items-center text-sm text-white rounded-md bg-primary hover:bg-primary-dark focus:outline-none focus:ring focus:ring-primary focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark"
         >
           <ChevronDoubleLeftIcon className="w-5 h-5" />
@@ -123,19 +138,13 @@ const Add = () => {
               onSubmit={methods.handleSubmit(onSubmitHandler)}
             >
               <div className="grid grid-cols-1">
-                <FormInput label="Name" type="text" name="name" />
-              </div>
-              <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
-              </div>
-              <div className="grid grid-cols-1">
                 <FormSelect
-                  label="Sub Domains"
-                  name="subdomain"
-                  isLoading={isDomainLoading}
+                  label="Regulator"
+                  name="regulator"
+                  isLoading={isRegulatorLoading}
                   data={
-                    isSuccess
-                      ? subdomains.data.map(({ id, name }) => ({
+                    isRegultorSuccess
+                      ? regulatorList.data.map(({ id, name }) => ({
                           value: id.toString(),
                           label: name,
                         }))
@@ -144,6 +153,28 @@ const Add = () => {
                   isMulti={false}
                   isRtl={false}
                 />
+              </div>
+
+              <div className="grid grid-cols-1">
+                <FormSelect
+                  label="Organization"
+                  name="org"
+                  isLoading={isOrgLoading}
+                  data={
+                    isOrgSuccess
+                      ? orgList.data.map(({ id, name }) => ({
+                          value: id.toString(),
+                          label: name,
+                        }))
+                      : []
+                  }
+                  isMulti={false}
+                  isRtl={false}
+                />
+              </div>
+
+              <div className="grid grid-cols-1">
+                <FormInput label="Email" type="email" name="email" />
               </div>
               <div className="flex">
                 <SubmitButton

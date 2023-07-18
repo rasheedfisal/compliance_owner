@@ -5,3 +5,5 @@
 - subdomain trashed endpoint returns following :
     Exception Message:\n\nAttempt to read property \"name\" on null
 - add selectable for (domain, subdomain)
+
+- remove authorization from endpoint get-by-token

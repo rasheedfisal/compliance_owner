@@ -12,6 +12,7 @@ import { logoutUserFn } from "@/api/authApi";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
 import Link from "next/link";
+import { useStateContext } from "@/context/AppConext";
 
 type DesktopProps = {
   toggleTheme: MouseEventHandler;
@@ -22,7 +23,7 @@ type DesktopProps = {
   OpenUserProfilePanel: MouseEventHandler;
   openUserProfile: boolean;
   userMenuRef: RefObject<HTMLDivElement>;
-  handleUserSpace: KeyboardEventHandler<HTMLDivElement>;
+  handleUserSpace: MouseEventHandler<HTMLAnchorElement>;
   notifyCount: number;
 };
 
@@ -38,8 +39,8 @@ const DesktopMenu = ({
   handleUserSpace,
   notifyCount,
 }: DesktopProps) => {
-  const loaded = useLoaded();
   const router = useRouter();
+  const stateContext = useStateContext();
 
   const { mutate: logoutUser, isLoading } = useMutation(() => logoutUserFn(), {
     onSuccess: () => {
@@ -62,7 +63,7 @@ const DesktopMenu = ({
       className="hidden space-x-2 md:flex md:items-center"
     >
       {/* <!-- Toggle dark theme button --> */}
-      <button
+      {/* <button
         aria-hidden="true"
         className="relative focus:outline-none"
         onClick={toggleTheme}
@@ -106,7 +107,7 @@ const DesktopMenu = ({
             />
           </svg>
         </div>
-      </button>
+      </button> */}
 
       {/* <!-- Notification button --> */}
       <button
@@ -137,7 +138,7 @@ const DesktopMenu = ({
       </button>
 
       {/* <!-- Search button --> */}
-      <button
+      {/* <button
         onClick={openSearchPanel}
         className="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
       >
@@ -157,10 +158,10 @@ const DesktopMenu = ({
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-      </button>
+      </button> */}
 
       {/* <!-- Settings button --> */}
-      <button
+      {/* <button
         onClick={openSettingsPanel}
         className="p-2 transition-colors duration-200 rounded-full text-primary-lighter bg-primary-50 hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker"
       >
@@ -186,7 +187,7 @@ const DesktopMenu = ({
             d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
           />
         </svg>
-      </button>
+      </button> */}
 
       {/* <!-- User avatar button --> */}
       <div className="relative">
@@ -198,18 +199,19 @@ const DesktopMenu = ({
           className="transition-opacity duration-200 rounded-full dark:opacity-75 dark:hover:opacity-100 focus:outline-none focus:ring dark:focus:opacity-100"
         >
           <span className="sr-only">User menu</span>
-          {/* <Image className="w-10 h-10 rounded-full" src={avatar} alt="avatar" /> */}
-          <img
-            className="w-10 h-10 rounded-full"
-            src={"/noImg.jpg"}
-            alt="avatar"
-          />
+
+          <span className="relative inline-flex items-center justify-center w-11 h-11 p-2 overflow-hidden text-primary-lighter bg-primary-50 rounded-full hover:text-primary hover:bg-primary-100 dark:hover:text-light dark:hover:bg-primary-dark dark:bg-dark focus:outline-none focus:bg-primary-100 dark:focus:bg-primary-dark focus:ring-primary-darker">
+            <span className="font-bold text-primary-lighter dark:text-gray-300">
+              {stateContext.state.authUser?.name.substring(0, 2).toUpperCase()}
+            </span>
+          </span>
         </button>
 
         {/* <!-- User dropdown menu --> */}
-        {openUserProfile && (
-          <AnimatePresence>
+        <AnimatePresence>
+          {openUserProfile && (
             <motion.div
+              key={1}
               ref={userMenuRef}
               initial={{ opacity: 0, y: 20 }}
               animate={{
@@ -228,7 +230,7 @@ const DesktopMenu = ({
                   duration: 0.2,
                 },
               }}
-              onKeyDown={handleUserSpace}
+              // onKeyDown={handleUserSpace}
               className={`absolute right-0 w-48 py-1 bg-white rounded-md shadow-lg top-12 ring-1 ring-black ring-opacity-5 dark:bg-dark focus:outline-none z-10`}
               tabIndex={-1}
               role="menu"
@@ -237,6 +239,7 @@ const DesktopMenu = ({
             >
               <Link
                 href="/profile"
+                onClick={handleUserSpace}
                 role="menuitem"
                 className="block px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-light dark:hover:bg-primary"
               >
@@ -287,8 +290,8 @@ const DesktopMenu = ({
                 )}
               </span>
             </motion.div>
-          </AnimatePresence>
-        )}
+          )}
+        </AnimatePresence>
       </div>
     </nav>
   );

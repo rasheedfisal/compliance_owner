@@ -11,7 +11,7 @@ import RadioGroup from "@/components/RadioGroup";
 import DateRangePicker from "@/components/DateRangePickerAdvance";
 import { toast } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
-import { getModelsFn } from "@/api/selectablesApi";
+import { getModelsFn, getUsersFn } from "@/api/selectablesApi";
 import Select from "react-select";
 import { AnimatePresence, motion } from "framer-motion";
 import { addDays } from "date-fns";
@@ -26,6 +26,7 @@ const Index = dynamic(
 const Manage = () => {
   const [filter, setFilter] = useState(0);
   const [model, setModel] = useState("all");
+  const [userId, setUserId] = useState(0);
   const [range, setRange] = useState<Range[]>([
     {
       startDate: new Date(),
@@ -42,6 +43,26 @@ const Manage = () => {
     select: (data) => data,
     retry: 1,
     enabled: filter === 3 || filter === 5,
+    onSuccess(data) {
+      console.log(data.data);
+    },
+    onError: (error) => {
+      if ((error as any).response?.data?.msg) {
+        toast.error((error as any).response?.data?.msg, {
+          position: "top-right",
+        });
+      }
+    },
+  });
+
+  const {
+    isLoading: isUsersLoading,
+    isSuccess: isUserSuccess,
+    data: users,
+  } = useQuery(["users-list"], () => getUsersFn(), {
+    select: (data) => data,
+    retry: 1,
+    enabled: filter === 4 || filter === 5,
     onSuccess(data) {
       console.log(data.data);
     },
@@ -89,10 +110,10 @@ const Manage = () => {
                   <span>By User</span>
                   <UserIcon className="w-4" />
                 </div>,
-                <div key={5} className="flex  flex-1 justify-around">
-                  <span>Multiple</span>
-                  <AdjustmentsHorizontalIcon className="w-4" />
-                </div>,
+                // <div key={5} className="flex  flex-1 justify-around">
+                //   <span>Multiple</span>
+                //   <AdjustmentsHorizontalIcon className="w-4" />
+                // </div>,
               ]}
             />
           </div>
@@ -100,7 +121,7 @@ const Manage = () => {
             <AnimatePresence>
               {(filter === 3 || filter === 5) && (
                 <motion.div
-                  key={2}
+                  key={1}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
                     opacity: 1,
@@ -143,9 +164,54 @@ const Manage = () => {
                 </motion.div>
               )}
 
-              {filter === 5 && (
+              {(filter === 4 || filter === 5) && (
                 <motion.div
-                  key={1}
+                  key={2}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      ease: "easeOut",
+                      duration: 0.3,
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 20,
+                    transition: {
+                      ease: "easeIn",
+                      duration: 0.2,
+                    },
+                  }}
+                  className="flex flex-col"
+                >
+                  <span>Users</span>
+                  <Select
+                    classNames={{
+                      control: () =>
+                        "py-[.1rem] border rounded-md dark:bg-darker dark:border-gray-700 focus:outline-none focus:ring focus:ring-primary-100 dark:focus:ring-primary-darker",
+                    }}
+                    className="my-react-select-container"
+                    classNamePrefix="my-react-select"
+                    options={
+                      isUserSuccess
+                        ? users.data.map(({ id, name }) => ({
+                            value: id,
+                            label: name,
+                          }))
+                        : []
+                    }
+                    onChange={(e) => setUserId(e?.value ?? 0)}
+                    isClearable={true}
+                    isLoading={isUsersLoading}
+                  />
+                </motion.div>
+              )}
+
+              {/* {filter === 5 && (
+                <motion.div
+                  key={3}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{
                     opacity: 1,
@@ -168,7 +234,7 @@ const Manage = () => {
                   <span>Date Range</span>
                   <DateRangePicker range={range} setRange={setRange} />
                 </motion.div>
-              )}
+              )} */}
             </AnimatePresence>
           </div>
           <div className="overflow-x-auto">
@@ -177,6 +243,7 @@ const Manage = () => {
               model={model}
               datefrom={range[0].startDate}
               dateto={range[0].endDate}
+              userId={userId}
             />
           </div>
         </div>

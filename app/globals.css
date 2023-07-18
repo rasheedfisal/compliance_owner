@@ -197,7 +197,7 @@ tr.shown td.details-control {
   }
 
   .my-react-select-container .my-react-select__option {
-    @apply text-primary dark:text-white bg-white hover:bg-gray-400 dark:bg-dark dark:hover:bg-primary-lighter;
+    @apply text-primary dark:text-white bg-white hover:bg-gray-100 dark:bg-dark dark:hover:bg-primary-lighter;
   }
 
   .my-react-select-container .my-react-select__indicator-separator {
