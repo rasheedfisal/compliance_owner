@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { notFound, useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { object, string, TypeOf } from "zod";
@@ -22,6 +22,7 @@ import SubmitButton from "@/components/SubmitButton";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { registerOnboardingsFn } from "@/api/onboardingsApi";
 import { BounceLoader } from "react-spinners";
+import { AxiosError } from "axios";
 
 type PageProps = {
   params: {
@@ -69,14 +70,19 @@ const Register = ({ params: { token } }: PageProps) => {
   );
 
   //  API Login Mutation
-  const { mutate: registerOnboarding, isLoading } = useMutation(
+  const {
+    mutate: registerOnboarding,
+    isLoading,
+    isError,
+    error,
+  } = useMutation(
     (userData: CreateOnboarding) => registerOnboardingsFn(userData),
     {
       onSuccess: ({ message }) => {
         toast.success(message);
         router.push("/login");
       },
-      onError: (error: any) => {
+      onError: (error) => {
         if ((error as any).response?.data.message) {
           toast.error((error as any).response?.data.message, {
             position: "top-right",
@@ -109,13 +115,15 @@ const Register = ({ params: { token } }: PageProps) => {
     registerOnboarding({ ...values, token });
   };
 
-  if (isDataLoading) {
+  if (isDataLoading && !isError) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center text-2xl font-semibold bg-white">
         {/* Loading..... */}
         <BounceLoader size={50} color="#8b8d8d" speedMultiplier={3} />
       </div>
     );
+  } else {
+    notFound();
   }
 
   return (
