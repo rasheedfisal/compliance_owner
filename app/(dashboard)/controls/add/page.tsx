@@ -18,6 +18,7 @@ import { getAllSubDominFn } from "@/api/subDomainApi";
 import { ICreateUpdateControls } from "@/typings";
 import { useRouter } from "next/navigation";
 import FormSelect from "@/components/FormSelect";
+import FormTextArea from "@/components/FormTextArea";
 
 const createUpdateContrlsSchema = object({
   name: string().min(1, "Name is required"),
@@ -123,14 +124,8 @@ const Add = () => {
               onSubmit={methods.handleSubmit(onSubmitHandler)}
             >
               <div className="grid grid-cols-1">
-                <FormInput label="Name" type="text" name="name" />
-              </div>
-              <div className="grid grid-cols-1">
-                <FormInput label="Code" type="text" name="code" />
-              </div>
-              <div className="grid grid-cols-1">
                 <FormSelect
-                  label="Sub Domains"
+                  label="Sub Domain"
                   name="subdomain"
                   isLoading={isDomainLoading}
                   data={
@@ -144,6 +139,12 @@ const Add = () => {
                   isMulti={false}
                   isRtl={false}
                 />
+              </div>
+              <div className="grid grid-cols-1">
+                <FormInput label="Control Code" type="text" name="code" />
+              </div>
+              <div className="grid grid-cols-1">
+                <FormTextArea label="Control" rows={4} name="name" />
               </div>
               <div className="flex">
                 <SubmitButton
