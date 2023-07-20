@@ -24,7 +24,7 @@ const FormInputShow: FC<IFormInputShowProps> = ({ name, label, type }) => {
           </label>
           <input
             {...field}
-            className="px-4 py-2 border-0 rounded-md dark:bg-darker focus:outline-none"
+            className="px-4 py-2 flex-1 border-0 rounded-md dark:bg-darker focus:outline-none"
             name="title"
             type={type}
             disabled
