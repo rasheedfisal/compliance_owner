@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import useAccessToken from "@/hooks/useAccessToken";
 import Cookies from "js-cookie";
+import { useStateContext } from "@/context/AppConext";
 
 type Props = {
   children: React.ReactNode;
@@ -9,6 +10,7 @@ type Props = {
 const Persist = ({ children }: Props) => {
   const [isLoading, setIsLoading] = useState(true);
   const accessToken = useAccessToken();
+  const stateContext = useStateContext();
   const token = Cookies.get("AT");
 
   useEffect(() => {
@@ -22,7 +24,9 @@ const Persist = ({ children }: Props) => {
       }
     };
 
-    token ? verifyAccessToken() : setIsLoading(false);
+    stateContext.state.authUser === null && token
+      ? verifyAccessToken()
+      : setIsLoading(false);
   }, []);
 
   return <>{isLoading ? <p>Loading...</p> : children}</>;

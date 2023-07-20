@@ -2,7 +2,7 @@ import { ForgetInput } from "@/app/(auth)/forget/page";
 import { LoginInput } from "../app/(auth)/login/page";
 import { ILogin, IUser, IResponse, IResetPassword } from "../typings";
 import { authApi, privateAuthApi } from "./axios";
-import { IUpdateVerfiy } from "@/app/(dashboard)/profile/page";
+import { IUpdateVerfiy } from "@/app/(dashboard)/verified/page";
 
 export const loginUserFn = async (user: LoginInput) => {
   const response = await authApi.post<IResponse<ILogin>>("/admin/login", user);
