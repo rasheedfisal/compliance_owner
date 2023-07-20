@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { deleteOnboardingFn } from "@/api/onboardingsApi";
 import CompletedBadge from "@/components/CompletedBadge";
+import SearchIcon from "@/icons/SearchIcon";
 
 const Index = () => {
   const token = Cookies.get("AT");
@@ -94,6 +95,13 @@ const Index = () => {
           createdCell: (td, cellData, rowData) =>
             createRoot(td).render(
               <div className="flex">
+                <button
+                  className="w-4 mr-2 mt-1 transform rounded-md text-blue-700 hover:scale-110"
+                  title="show"
+                  onClick={() => router.push(`/onboardings/show/${rowData.id}`)}
+                >
+                  <SearchIcon />
+                </button>
                 {rowData.is_complete === 0 ? (
                   <button
                     className="bg-red-700 space-x-1 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-700 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark text-xs font-bold uppercase px-3 py-1 rounded outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer"
