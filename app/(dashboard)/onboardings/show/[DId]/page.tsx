@@ -32,7 +32,6 @@ const showSchema = object({
 type IShow = TypeOf<typeof showSchema>;
 
 const Show = ({ params: { DId } }: PageProps) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const { isLoading: isOnboardingLoading, data } = useQuery(
     ["onboardings", DId],
