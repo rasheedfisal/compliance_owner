@@ -120,7 +120,11 @@ const Add = () => {
                 <FormInput label="Name" type="text" name="name" />
               </div>
               <div className="grid grid-cols-1">
-                <FormInput label="Email" type="email" name="email_domain" />
+                <FormInput
+                  label="Email Domain"
+                  type="email"
+                  name="email_domain"
+                />
               </div>
               <div className="grid grid-cols-1">
                 <FormInput label="Code" type="text" name="code" />
