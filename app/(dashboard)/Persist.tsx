@@ -22,7 +22,7 @@ const Persist = ({ children }: Props) => {
       }
     };
 
-    !token ? verifyAccessToken() : setIsLoading(false);
+    token ? verifyAccessToken() : setIsLoading(false);
   }, []);
 
   return <>{isLoading ? <p>Loading...</p> : children}</>;
