@@ -15,6 +15,7 @@ import NavBar from "./NavBar";
 import SideBar from "./SideBar";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { setColors } from "../ThemeSettings";
+import Persist from "./Persist";
 
 export default function RootLayout({
   children,
@@ -181,7 +182,7 @@ export default function RootLayout({
                 exit="out"
                 className="m-2"
               >
-                {children}
+                <Persist>{children}</Persist>
               </motion.div>
             </div>
           </main>
