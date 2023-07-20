@@ -19,9 +19,11 @@ import { toast } from "react-toastify";
 import { deleteOnboardingFn } from "@/api/onboardingsApi";
 import CompletedBadge from "@/components/CompletedBadge";
 import SearchIcon from "@/icons/SearchIcon";
+import { useRouter } from "next/navigation";
 
 const Index = () => {
   const token = Cookies.get("AT");
+  const router = useRouter();
 
   const { isSuccess: isDeletedSuccess, mutate: deleteOnboarding } = useMutation(
     ({ id }) => deleteOnboardingFn({ id }),
