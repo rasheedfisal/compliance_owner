@@ -43,6 +43,12 @@ const Index = () => {
     }
   );
 
+  const handleDelete = (id) => {
+    if (confirm("are you sure you want to delete this?")) {
+      deleteOnboarding({ id });
+    }
+  };
+
   useUpdateEffect(() => {
     //initialize datatable
     $("#onboardings_index").DataTable({
@@ -91,7 +97,7 @@ const Index = () => {
                 {rowData.is_complete === 0 ? (
                   <button
                     className="bg-red-700 space-x-1 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-700 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark text-xs font-bold uppercase px-3 py-1 rounded outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer"
-                    onClick={() => deleteOnboarding({ id: rowData.id })}
+                    onClick={() => handleDelete(rowData.id)}
                   >
                     <span className="w-4 inline-flex align-middle">
                       <DeleteIcon />

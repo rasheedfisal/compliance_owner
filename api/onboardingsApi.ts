@@ -25,6 +25,13 @@ export const registerOnboardingsFn = async (onboardings: CreateOnboarding) => {
   return response.data;
 };
 
+export const getOnboardingFn = async (id: string) => {
+  const response = await privateAuthApi.get<IResponse<IOnBoardingsFullInfo>>(
+    `/admin/onboardings/${id}`
+  );
+  return response.data;
+};
+
 export const deleteOnboardingFn = async ({ id }: { id: string }) => {
   const response = await privateAuthApi.delete<IResponse<[]>>(
     `/admin/onboardings/${id}`
