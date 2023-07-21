@@ -75,4 +75,9 @@ export const links: ILinksII[] = [
     path: "/invitations",
     icon: <EnvelopeIcon className="w-5 h-5" />,
   },
+  {
+    title: "Users",
+    path: "/users",
+    icon: <ShieldExclamationIcon className="w-5 h-5" />,
+  },
 ];
