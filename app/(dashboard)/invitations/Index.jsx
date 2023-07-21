@@ -5,18 +5,19 @@ import { createRoot } from "react-dom/client";
 //Bootstrap and jQuery libraries
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery/dist/jquery.min.js";
+import ReactDOM from "react-dom";
 
 // //Datatable Modules
 import "datatables.net-dt/js/dataTables.dataTables";
 // import "datatables.net-dt/css/jquery.dataTables.min.css";
-import $ from "jquery";
+import $, { data } from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
 import UploadIcon from "@/icons/UploadIcon";
 import DeleteIcon from "@/icons/DeleteIcon";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { deleteOnboardingFn } from "@/api/onboardingsApi";
+import { deleteInvitationFn } from "@/api/onboardingsApi";
 import CompletedBadge from "@/components/CompletedBadge";
 import SearchIcon from "@/icons/SearchIcon";
 import { useRouter } from "next/navigation";
@@ -25,8 +26,8 @@ const Index = () => {
   const token = Cookies.get("AT");
   const router = useRouter();
 
-  const { isSuccess: isDeletedSuccess, mutate: deleteOnboarding } = useMutation(
-    ({ id }) => deleteOnboardingFn({ id }),
+  const { isSuccess: isDeletedSuccess, mutate: deleteInvitation } = useMutation(
+    ({ id }) => deleteInvitationFn({ id }),
     {
       onSuccess: ({ message }) => {
         toast.success(message);
@@ -48,15 +49,15 @@ const Index = () => {
 
   const handleDelete = (id) => {
     if (confirm("are you sure you want to delete this?")) {
-      deleteOnboarding({ id });
+      deleteInvitation({ id });
     }
   };
 
   useUpdateEffect(() => {
     //initialize datatable
-    $("#onboardings_index").DataTable({
+    $("#invitations_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/onboardings",
+        url: "https://lets-comply-backend.auguma.io/admin/invitations",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,10 +68,13 @@ const Index = () => {
       columns: [
         // colum names..
         { data: "regulator", searchable: true, orderable: true },
-        { data: "organization", searchable: true, orderable: true },
         { data: "email", searchable: true, orderable: true },
         { data: "created_at", searchable: true, orderable: true },
-        { data: "is_complete", searchable: true, orderable: true },
+        {
+          data: "is_complete",
+          searchable: false,
+          orderable: false,
+        },
 
         {
           data: "actions",
@@ -80,31 +84,29 @@ const Index = () => {
         },
       ],
       columnDefs: [
-        // difinition and styling
-        //{ targets: [0, 5] },
-        // { className: "text-center", targets: [1, 2] },
         {
-          targets: [4],
-          createdCell: (td, cellData, rowData) =>
+          targets: [3],
+          createdCell: (td, cellData, rowData) => {
             createRoot(td).render(
               <div className="flex items-center">
                 <CompletedBadge isComplete={cellData} />
               </div>
-            ),
+            );
+          },
         },
         {
-          targets: [5],
+          targets: [4],
           createdCell: (td, cellData, rowData) =>
             createRoot(td).render(
               <div className="flex">
-                <button
+                {/* <button
                   className="w-4 mr-2 mt-1 transform rounded-md text-blue-700 hover:scale-110"
                   title="show"
-                  onClick={() => router.push(`/onboardings/show/${rowData.id}`)}
+                  onClick={() => router.push(`/invitations/show/${rowData.id}`)}
                 >
                   <SearchIcon />
-                </button>
-                {rowData.is_complete === 0 ? (
+                </button> */}
+                {rowData.is_complete === "0" ? (
                   <button
                     className="bg-red-700 space-x-1 hover:bg-red-600 text-white focus:outline-none focus:ring focus:ring-red-700 focus:ring-offset-1 focus:ring-offset-white dark:focus:ring-offset-dark text-xs font-bold uppercase px-3 py-1 rounded outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer"
                     onClick={() => handleDelete(rowData.id)}
@@ -123,14 +125,13 @@ const Index = () => {
   }, []);
   useUpdateEffect(() => {
     //initialize datatable
-    $("#onboardings_index").DataTable().ajax.reload();
+    $("#invitations_index").DataTable().ajax.reload();
   }, [isDeletedSuccess]);
   return (
-    <table id="onboardings_index" className="display compact pt-3">
+    <table id="invitations_index" className="display compact pt-3">
       <thead className="bg-primary text-white">
         <tr>
           <th>regulator</th>
-          <th className="self-center">organization</th>
           <th className="text-center">email</th>
           <th>Created At</th>
           <th className="text-center">Status</th>

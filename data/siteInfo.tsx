@@ -9,6 +9,7 @@ import {
   DocumentTextIcon,
   InboxIcon,
   InboxStackIcon,
+  EnvelopeIcon,
 } from "@heroicons/react/24/solid";
 
 interface ILinks {
@@ -68,5 +69,10 @@ export const links: ILinksII[] = [
     title: "Onboardings",
     path: "/onboardings",
     icon: <InboxIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Invitations",
+    path: "/invitations",
+    icon: <EnvelopeIcon className="w-5 h-5" />,
   },
 ];

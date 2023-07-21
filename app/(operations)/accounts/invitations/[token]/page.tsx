@@ -13,7 +13,11 @@ import {
 } from "@heroicons/react/24/solid";
 
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { getByTokenFn } from "@/api/onboardingsApi";
+import {
+  getByTokenFn,
+  getInvitationByTokenFn,
+  registerInvitationFn,
+} from "@/api/onboardingsApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import FormInput3 from "@/components/FormInput3";
@@ -28,7 +32,7 @@ type PageProps = {
   };
 };
 
-const onboardingSchema = object({
+const invitationSchema = object({
   name: string().min(1, "Name is required"),
   email_username: string().min(1, "Name is required"),
   password: string()
@@ -41,21 +45,21 @@ const onboardingSchema = object({
   path: ["confirm"],
 });
 
-export type OnboardingInput = TypeOf<typeof onboardingSchema>;
+export type InvitationInput = TypeOf<typeof invitationSchema>;
 
-export type CreateOnboarding = OnboardingInput & { token: string };
+export type CreateInvitation = InvitationInput & { token: string };
 
-const Register = ({ params: { token } }: PageProps) => {
+const Invitation = ({ params: { token } }: PageProps) => {
   const router = useRouter();
 
-  const methods = useForm<OnboardingInput>({
-    resolver: zodResolver(onboardingSchema),
+  const methods = useForm<InvitationInput>({
+    resolver: zodResolver(invitationSchema),
   });
 
   // API Get Current Logged-in user
-  const { isLoading: isDataLoading, data: onboardingInfo } = useQuery(
-    ["onboardings", token],
-    () => getByTokenFn(token),
+  const { isLoading: isDataLoading, data: invitationInfo } = useQuery(
+    ["invitations", token],
+    () => getInvitationByTokenFn(token),
     {
       select: (data) => data,
       retry: 1,
@@ -67,12 +71,12 @@ const Register = ({ params: { token } }: PageProps) => {
 
   //  API Login Mutation
   const {
-    mutate: registerOnboarding,
+    mutate: registerInvitation,
     isLoading,
     isError,
     error,
   } = useMutation(
-    (userData: CreateOnboarding) => registerOnboardingsFn(userData),
+    (userData: CreateInvitation) => registerInvitationFn(userData),
     {
       onSuccess: ({ message }) => {
         toast.success(message);
@@ -106,9 +110,9 @@ const Register = ({ params: { token } }: PageProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
-  const onSubmitHandler: SubmitHandler<OnboardingInput> = (values) => {
+  const onSubmitHandler: SubmitHandler<InvitationInput> = (values) => {
     // 👇 Executing the loginUser Mutation
-    registerOnboarding({ ...values, token });
+    registerInvitation({ ...values, token });
   };
 
   if (isDataLoading && !isError) {
@@ -128,37 +132,21 @@ const Register = ({ params: { token } }: PageProps) => {
         <span className="text-gray-600 font-medium block">
           {"Welcome "}{" "}
           <span className="text-primary font-bold">
-            {onboardingInfo?.data.organization.name}
+            {invitationInfo?.data.regulator.name}
           </span>{" "}
           {","}
-        </span>
-        <span className="text-gray-600 font-medium block">
-          {"this is the registration request sent by "}{" "}
-          <span className="text-primary font-bold">
-            {onboardingInfo?.data.regulator.name}
-          </span>
         </span>
         <div className="flex flex-col space-y-2">
           <div className="flex gap-3">
             <label className="text-sm font-medium">your email {":"}</label>
-            <span className="text-sm"> {onboardingInfo?.data.email}</span>
-          </div>
-          <div className="flex gap-3">
-            <label className="text-sm font-medium">Code {":"}</label>
-            <span className="text-sm">
-              {onboardingInfo?.data.organization.code}
-            </span>
+            <span className="text-sm"> {invitationInfo?.data.email}</span>
           </div>
           <div className="flex gap-3">
             <label className="text-sm font-medium">Created At {":"}</label>
             <span className="text-sm">
-              {onboardingInfo?.data.created_at.toString()}
+              {invitationInfo?.data.created_at.toString()}
             </span>
           </div>
-          {/* <div className="flex gap-3">
-            <label className="text-sm font-medium">Role {":"}</label>
-            <span className="text-sm text-primary font-bold">{"test "}</span>
-          </div>*/}
         </div>
       </div>
       <div className="lg:col-span-2 px-4 py-6 rounded bg-white dark:bg-darker space-y-4">
@@ -186,7 +174,7 @@ const Register = ({ params: { token } }: PageProps) => {
                 label="Email Username"
                 type="text"
                 icon={<EnvelopeIcon className="w-4 h-4" />}
-                text={onboardingInfo?.data.organization.email_domain}
+                text={invitationInfo?.data.regulator.email_domain}
               />
             </div>
             <div className="grid grid-cols-1">
@@ -220,4 +208,4 @@ const Register = ({ params: { token } }: PageProps) => {
   );
 };
 
-export default Register;
+export default Invitation;
