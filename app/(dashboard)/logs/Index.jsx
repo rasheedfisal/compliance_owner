@@ -14,6 +14,7 @@ import "datatables.net-responsive/js/dataTables.responsive";
 import $ from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
+import { BASE_URL } from "@/api/axios";
 
 const logFilter = {
   0: "log",
@@ -31,7 +32,7 @@ const Index = ({ filter, model, datefrom, dateto, userId }) => {
     //initialize datatable
     $("#logs_index").DataTable({
       ajax: {
-        url: `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`,
+        url: `${BASE_URL}/admin/${logFilter[filter]}`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,33 +63,27 @@ const Index = ({ filter, model, datefrom, dateto, userId }) => {
       if (model !== "all") {
         $("#logs_index")
           .DataTable()
-          .ajax.url(
-            `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}/${model}`
-          )
+          .ajax.url(`${BASE_URL}/admin/${logFilter[filter]}/${model}`)
           .load();
       }
     } else if (filter === 4) {
       if (userId !== 0) {
         $("#logs_index")
           .DataTable()
-          .ajax.url(
-            `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}/${userId}`
-          )
+          .ajax.url(`${BASE_URL}/admin/${logFilter[filter]}/${userId}`)
           .load();
       }
     } else if (filter === 5) {
       $("#logs_index")
         .DataTable()
         .ajax.url(
-          `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}?user_id=&from=${datefrom}&to=${dateto}&model=${model}`
+          `${BASE_URL}/admin/${logFilter[filter]}?user_id=&from=${datefrom}&to=${dateto}&model=${model}`
         )
         .load();
     } else {
       $("#logs_index")
         .DataTable()
-        .ajax.url(
-          `https://lets-comply-backend.auguma.io/admin/${logFilter[filter]}`
-        )
+        .ajax.url(`${BASE_URL}/admin/${logFilter[filter]}`)
         .load();
     }
   }, [filter, model, dateto, userId]);

@@ -17,6 +17,7 @@ import DeleteIcon from "@/icons/DeleteIcon";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { restoreControlsFn, deleteControlsFn } from "@/api/controlsApi";
+import { BASE_URL } from "@/api/axios";
 
 const Index = () => {
   const token = Cookies.get("AT");
@@ -71,7 +72,7 @@ const Index = () => {
     //initialize datatable
     $("#controls_trash_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/controls/trashed",
+        url: `${BASE_URL}/admin/controls/trashed`,
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -20,6 +20,7 @@ import { deleteOnboardingFn } from "@/api/onboardingsApi";
 import CompletedBadge from "@/components/CompletedBadge";
 import SearchIcon from "@/icons/SearchIcon";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/api/axios";
 
 const Index = () => {
   const token = Cookies.get("AT");
@@ -56,7 +57,7 @@ const Index = () => {
     //initialize datatable
     $("#onboardings_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/onboardings",
+        url: `${BASE_URL}/admin/onboardings`,
         headers: {
           Authorization: `Bearer ${token}`,
         },

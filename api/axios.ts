@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-const BASE_URL = "https://lets-comply-backend.auguma.io";
+export const BASE_URL = "https://lets-comply-backend.auguma.io";
 
 export const authApi = axios.create({
   baseURL: BASE_URL,

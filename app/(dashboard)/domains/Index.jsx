@@ -15,6 +15,7 @@ import useUpdateEffect from "@/hooks/useUpdateEffect";
 import { useRouter } from "next/navigation";
 import EditIcon from "@/icons/EditIcon";
 import SearchIcon from "@/icons/SearchIcon";
+import { BASE_URL } from "@/api/axios";
 
 const Index = () => {
   const token = Cookies.get("AT");
@@ -30,7 +31,7 @@ const Index = () => {
     //initialize datatable
     $("#domain_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/domains",
+        url: `${BASE_URL}/admin/domains`,
         headers: {
           Authorization: `Bearer ${token}`,
         },

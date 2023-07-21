@@ -5,7 +5,6 @@ import { createRoot } from "react-dom/client";
 //Bootstrap and jQuery libraries
 // import "bootstrap/dist/css/bootstrap.min.css";
 import "jquery/dist/jquery.min.js";
-import ReactDOM from "react-dom";
 
 // //Datatable Modules
 import "datatables.net-dt/js/dataTables.dataTables";
@@ -13,7 +12,6 @@ import "datatables.net-dt/js/dataTables.dataTables";
 import $, { data } from "jquery";
 import Cookies from "js-cookie";
 import useUpdateEffect from "@/hooks/useUpdateEffect";
-import UploadIcon from "@/icons/UploadIcon";
 import DeleteIcon from "@/icons/DeleteIcon";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -21,6 +19,7 @@ import { deleteInvitationFn } from "@/api/onboardingsApi";
 import CompletedBadge from "@/components/CompletedBadge";
 import SearchIcon from "@/icons/SearchIcon";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/api/axios";
 
 const Index = () => {
   const token = Cookies.get("AT");
@@ -57,7 +56,7 @@ const Index = () => {
     //initialize datatable
     $("#invitations_index").DataTable({
       ajax: {
-        url: "https://lets-comply-backend.auguma.io/admin/invitations",
+        url: `${BASE_URL}/admin/invitations`,
         headers: {
           Authorization: `Bearer ${token}`,
         },
