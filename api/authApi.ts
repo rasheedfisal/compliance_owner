@@ -33,7 +33,7 @@ export const sendEmailOTPFn = async () => {
 };
 export const verifyEmailFn = async (domain: IUpdateVerfiy) => {
   const response = await privateAuthApi.post<IResponse<[]>>(
-    `/admin/domains`,
+    `/admin/email/verify`,
     domain
   );
   return response.data;
