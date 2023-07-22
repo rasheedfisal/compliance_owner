@@ -29,3 +29,17 @@ privateAuthApi.interceptors.request.use(
   },
   (err) => Promise.reject(err)
 );
+
+privateAuthApi.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const errStatus = error?.response?.status;
+
+    if (errStatus === 401) {
+      document.location.href = "/";
+    }
+    return Promise.reject(error);
+  }
+);
