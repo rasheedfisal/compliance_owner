@@ -24,7 +24,7 @@ import { createUserFn } from "@/api/authApi";
 
 const createUserSchema = object({
   name: string().min(1, "Name is required"),
-  email: string().min(1, "Name is required"),
+  email: string().min(1, "Email is required"),
   password: string()
     .min(1, "Password is required")
     .min(8, "Password must be more than 8 characters")
